@@ -120,4 +120,5 @@ return [
         ],
     ],
 
+    'pretend' => false,
 ];

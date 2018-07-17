@@ -48,6 +48,11 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'datasets' => [
+            'driver' => 'local',
+            'root' => storage_path('app/datasets'),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
