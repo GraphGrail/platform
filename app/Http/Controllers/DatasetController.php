@@ -6,7 +6,6 @@ use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\LabelGroup;
 use App\Domain\Dataset\Storage;
 use App\Jobs\ExtractDatasetData;
-use App\Jobs\ExtractDatasetLabelTree;
 use http\Exception\RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
