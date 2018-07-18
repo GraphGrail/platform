@@ -17,4 +17,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+
+    Route::get('/datasets/download/{dataset}', 'DatasetController@download')->name('datasets.download');
+    Route::resource('datasets', 'DatasetController');
+});

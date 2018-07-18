@@ -27,4 +27,20 @@ abstract class Storage
         }
         return $this->disk->get($path);
     }
+
+    /**
+     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     */
+    public function getDisk(): \Illuminate\Contracts\Filesystem\Filesystem
+    {
+        return $this->disk;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDiskName(): string
+    {
+        return $this->diskName;
+    }
 }
