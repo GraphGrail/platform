@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Domain;
 
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\LabelGroup;
 use App\Domain\Dataset\Storage;
+use App\Http\Controllers\Controller;
 use App\Jobs\ExtractDatasetData;
 use http\Exception\RuntimeException;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class DatasetController extends Controller
     {
         $datasets = Dataset::query()->where(['user_id' => Auth::id()])->get()->all();
 
-        return view('datasets/index', ['datasets' => $datasets]);
+        return view('domain/datasets/index', ['datasets' => $datasets]);
     }
 
     /**
@@ -40,7 +41,7 @@ class DatasetController extends Controller
      */
     public function create()
     {
-        return view('datasets/form', ['dataset' => new Dataset(['user_id' => Auth::id()])]);
+        return view('domain/datasets/form', ['dataset' => new Dataset(['user_id' => Auth::id()])]);
     }
 
     /**
@@ -84,7 +85,7 @@ class DatasetController extends Controller
      */
     public function show(Dataset $dataset)
     {
-        return view('datasets/show', ['dataset' => $dataset]);
+        return view('domain/datasets/show', ['dataset' => $dataset]);
     }
 
     /**
@@ -95,7 +96,7 @@ class DatasetController extends Controller
      */
     public function edit(Dataset $dataset)
     {
-        return view('datasets/form', ['dataset' => $dataset]);
+        return view('domain/datasets/form', ['dataset' => $dataset]);
     }
 
     /**

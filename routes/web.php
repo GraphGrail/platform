@@ -21,6 +21,9 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
-    Route::get('/datasets/download/{dataset}', 'DatasetController@download')->name('datasets.download');
-    Route::resource('datasets', 'DatasetController');
+    Route::get('/datasets/download/{dataset}', 'Domain\DatasetController@download')->name('datasets.download');
+    Route::resource('datasets', 'Domain\DatasetController');
+
+    Route::get('labels', 'Domain\LabelController@index');
+    Route::get('labels/{group}', 'Domain\LabelController@show');
 });
