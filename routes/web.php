@@ -26,4 +26,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('labels', 'Domain\LabelController@index');
     Route::get('labels/{group}', 'Domain\LabelController@show');
+
+    Route::resource('ai-models', 'Domain\AiModelController');
 });

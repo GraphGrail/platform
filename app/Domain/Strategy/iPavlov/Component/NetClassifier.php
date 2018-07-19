@@ -6,7 +6,7 @@
 namespace App\Domain\Strategy\iPavlov\Component;
 
 
-abstract class Component extends \App\Domain\Component
+class NetClassifier extends Component
 {
 
 }
