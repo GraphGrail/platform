@@ -86,6 +86,6 @@ class ExtractDatasetData implements ShouldQueue
 
     protected function extractLabelTree($record)
     {
-        return array_shift($record);
+        return array_pop($record);
     }
 }
