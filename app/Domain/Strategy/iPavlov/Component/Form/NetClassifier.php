@@ -29,6 +29,7 @@ class NetClassifier extends ComponentForm
         'save_path' => 'Путь для сохранения весовых коэффициентов ИНС',
         'load_path' => 'Путь для загрузки весовых коэффициентов ИНС',
 
+        'layers[type]' => 'Тип архитектуры для слоя',
         'layers[activation]' => 'Функиция активации',
         'layers[units]' => 'Units',
         'layers[kernel_size]' => 'Размер ядра',
@@ -72,6 +73,15 @@ class NetClassifier extends ComponentForm
             'SGD' => 'SGD',
             'momentum' => 'momentum',
         ],
+        'activation' => [
+            'relu' => 'relu',
+            'sigmoid' => 'sigmoid',
+            'tanh' => 'tanh',
+        ],
+        'layers' => [
+            'bilstm_layers' => 'bilstm',
+            'conv_layers' => 'conv',
+        ],
     ];
 
     public function getFieldsFormObjects(): array
@@ -94,6 +104,11 @@ class NetClassifier extends ComponentForm
         $fields = [];
 
         $fields[] = [
+            $this->createLabel('layers[type]'),
+            \Form::select($this->createName('layers[0][arch]'), $this->variants['layers'], 'bilstm_layers'),
+        ];
+
+        $fields[] = [
             $this->createLabel('layers[units]'),
             \Form::number($this->createName('layers[0][units]'), 1024),
         ];
@@ -105,7 +120,7 @@ class NetClassifier extends ComponentForm
 
         $fields[] = [
             $this->createLabel('layers[activation]'),
-            \Form::text($this->createName('layers[0][activation]'), 'relu'),
+            \Form::select($this->createName('layers[0][activation]'), $this->variants['activation'], 'relu'),
         ];
         $result[] = implode('<br>', array_map(function ($data) {return implode('', $data);}, $fields));
 

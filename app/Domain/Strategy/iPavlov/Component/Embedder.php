@@ -51,4 +51,19 @@ class Embedder extends Component
     {
         return (new \App\Domain\Strategy\iPavlov\Component\Form\Embedder($this))->getFieldsFormObjects();
     }
+
+    public function jsonSerialize()
+    {
+        return array_merge([
+            'name' => 'embedder',
+            'in' => ['xn'],
+            'out' => ['xv'],
+            'load_path' => [
+                'ft_compressed.pkl',
+                'ft_compressed_local.pkl',
+            ],
+            'emb_dim' => 15,
+            'emb_len' => 25,
+        ], $this->createParams());
+    }
 }

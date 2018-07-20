@@ -46,4 +46,14 @@ class TextNormalizer extends Component
     {
         return (new \App\Domain\Strategy\iPavlov\Component\Form\TextNormalizer($this))->getFieldsFormObjects();
     }
+
+    public function jsonSerialize()
+    {
+        return array_merge([
+            'name' => 'text_normalizer',
+            'id' => 'text_normalizer',
+            'in' => ['x'],
+            'out' => ['xn'],
+        ], $this->createParams());
+    }
 }

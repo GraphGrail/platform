@@ -11,6 +11,20 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Validator;
 
+/**
+ * @property string architecture
+ * @property mixed loss
+ * @property mixed optimizer
+ * @property mixed metrics
+ * @property mixed l2_power
+ * @property array layers
+ * @property mixed emb_dim
+ * @property mixed seq_len
+ * @property mixed pool_size
+ * @property mixed dropout_power
+ * @property mixed n_classes
+ * @property mixed classes
+ */
 class NetClassifier extends Component
 {
     protected $attributes = [
@@ -21,7 +35,9 @@ class NetClassifier extends Component
         'architecture' => [
             'bigru',
             'dcnn',
+            'cnn',
             'dense',
+            'dual_bilstm_cnn_model',
         ],
         'loss' => [
             'categorical_crossentropy',
@@ -38,6 +54,13 @@ class NetClassifier extends Component
             'rmsprop',
             'SGD',
             'momentum',
+        ],
+    ];
+
+    protected $arch_layers = [
+        'dual_bilstm_cnn_model' => [
+            'bilstm_layers',
+            'conv_layers',
         ],
     ];
 
@@ -78,23 +101,52 @@ class NetClassifier extends Component
         return true;
     }
 
-    public function getAttributeForm($attribute): array
-    {
-        $map = [
-            'layers' => [
-                [
-                    'units' => 1024,
-                    'activation' => 'relu',
-                    'kernel_size' => 2,
-                ]
-            ],
-        ];
-
-        return $map[$attribute] ?? [];
-    }
-
     function getFields(): array
     {
         return (new \App\Domain\Strategy\iPavlov\Component\Form\NetClassifier($this))->getFieldsFormObjects();
+    }
+
+    public function jsonSerialize()
+    {
+        return array_merge([
+            'name' => 'cnn_model',
+            'in' => ['xv'],
+            'in_y' => ['y'],
+            'out' => ['y_pred'],
+
+            'architecture_name' => 'dual_bilstm_cnn_model',
+            'loss' => $this->loss,
+            'metrics' => [$this->metrics],
+            'optimizer' => $this->optimizer,
+            'architecture_params' => array_merge($this->createLayers($this->architecture),[
+                'emb_dim' => $this->emb_dim,
+                'seq_len' => $this->seq_len,
+                'pool_size' => $this->pool_size,
+                'dropout_power' => $this->dropout_power,
+                'new2old' => 'new2old.pkl',
+            ]),
+            'classes' => 'class_names.pkl',
+            'confident_threshold' => 0.14999999999999999,
+            'save_path' => 'cnn_weights.hdf',
+            'load_path' => 'cnn_weights.hdf5',
+        ], $this->createParams());
+    }
+
+    protected function createLayers($architecture): array
+    {
+        $list = [];
+        if (!$names = $this->arch_layers[$architecture]) {
+            return $list;
+        }
+
+        foreach ($this->layers as $layer) {
+            $name = $layer['name'];
+            unset($layer['name']);
+            $layer['l2_power'] = $this->l2_power;
+
+            $list[$name][] = $layer;
+        }
+
+        return $list;
     }
 }
