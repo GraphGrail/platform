@@ -6,6 +6,7 @@
 namespace App\Domain;
 
 
+use App\Domain\Strategy\Component\Form\FieldForm;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -16,6 +17,20 @@ use JsonSerializable;
 abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     use HasAttributes;
+
+    protected const CREATED_AT = 'created_at';
+
+    protected const UPDATED_AT = 'updated_at';
+
+    abstract public function description(): string;
+    abstract public function validate($data): bool;
+//    abstract public function getLabels(): array;
+//    abstract public function getValuesLabels(): array;
+
+    /**
+     * @return FieldForm[]
+     */
+    abstract public function getFields(): array;
 
     /**
      * Dynamically retrieve attributes on the model.
@@ -161,5 +176,29 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     public function jsonSerialize()
     {
         return $this->toArray();
+    }
+
+    protected function getIncrementing()
+    {
+        return false;
+    }
+
+    protected function getVisible()
+    {
+        return [];
+    }
+
+    protected function getHidden()
+    {
+        return [];
+    }
+
+    protected function getArrayableRelations()
+    {
+        return [];
+    }
+
+    protected function usesTimestamps() {
+        return false;
     }
 }

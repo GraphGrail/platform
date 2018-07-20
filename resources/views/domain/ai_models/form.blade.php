@@ -22,13 +22,22 @@ $method = $model->id ? 'put' : 'post';
 
 <h4>{{$model->id}}</h4>
 
-@foreach($provider->all() as $strategy)
-    {{ $strategy->name() }}
-@endforeach
-
-{!! Form::model($model, ['url' => url('ai-models'), 'method' => $method]); !!}
-
-{!! Form::submit('Save') !!}
-{!! Form::close() !!}
+<form method="{{ $method }}" action="{{ route('ai-models.store') }}">
+    @csrf
+    @foreach($provider->all() as $strategy)
+        <label class="">{{ $strategy->name() }}</label>
+        @foreach($strategy->getComponents() as $component)
+            <div>
+                <p>{{ $component->description() }}</p>
+                @foreach($component->getFields() as $field)
+                    {{ $field->getLabel() }}
+                    {{ $field->getInput() }}
+                    <br>
+                @endforeach
+            </div>
+        @endforeach
+    @endforeach
+    <button type="submit">Save</button>
+</form>
 
 
