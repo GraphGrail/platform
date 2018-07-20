@@ -7,6 +7,7 @@ use App\Domain\Strategy\StrategyProvider;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class AiModelController extends Controller
 {
@@ -38,12 +39,16 @@ class AiModelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+
+
+
+
+        return Redirect::to('ai-models');
     }
 
     /**

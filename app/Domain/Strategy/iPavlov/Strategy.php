@@ -16,7 +16,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
     public function __construct(array $params = [])
     {
         foreach ($params['components'] as $class) {
-            $this->components[] = new $class;
+            $this->components[] = new $class($this);
         }
     }
 

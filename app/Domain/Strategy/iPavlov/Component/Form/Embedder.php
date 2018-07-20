@@ -6,9 +6,10 @@
 namespace App\Domain\Strategy\iPavlov\Component\Form;
 
 
+use App\Domain\Strategy\Component\Form\ComponentForm;
 use App\Domain\Strategy\Component\Form\FieldForm;
 
-class Embedder
+class Embedder extends ComponentForm
 {
     protected $labels = [
         'emb_type' => 'Способ преобразования текста в признаковое пространство',
@@ -33,15 +34,7 @@ class Embedder
 
     protected function getType()
     {
-        return \Form::select('emb_type', $this->valueLabels, 'pretrained_compressed');
+        return \Form::select($this->createName('emb_type'), $this->valueLabels, 'pretrained_compressed');
     }
 
-    /**
-     * @param $name
-     * @return mixed
-     */
-    protected function createLabel($name)
-    {
-        return \Form::label($name, $this->labels[$name]);
-    }
 }

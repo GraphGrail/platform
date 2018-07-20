@@ -85,6 +85,6 @@ class NetClassifier extends Component
 
     function getFields(): array
     {
-        return (new \App\Domain\Strategy\iPavlov\Component\Form\NetClassifier())->getFieldsFormObjects();
+        return (new \App\Domain\Strategy\iPavlov\Component\Form\NetClassifier($this))->getFieldsFormObjects();
     }
 }

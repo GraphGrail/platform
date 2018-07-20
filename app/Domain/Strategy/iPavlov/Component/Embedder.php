@@ -39,6 +39,6 @@ class Embedder extends Component
 
     function getFields(): array
     {
-        return (new \App\Domain\Strategy\iPavlov\Component\Form\Embedder())->getFieldsFormObjects();
+        return (new \App\Domain\Strategy\iPavlov\Component\Form\Embedder($this))->getFieldsFormObjects();
     }
 }

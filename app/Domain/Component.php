@@ -7,6 +7,7 @@ namespace App\Domain;
 
 
 use App\Domain\Strategy\Component\Form\FieldForm;
+use App\Domain\Strategy\Strategy;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -22,10 +23,16 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
 
     protected const UPDATED_AT = 'updated_at';
 
+    /** @var Strategy */
+    protected $strategy;
+
     abstract public function description(): string;
     abstract public function validate($data): bool;
-//    abstract public function getLabels(): array;
-//    abstract public function getValuesLabels(): array;
+
+    public function __construct(Strategy $strategy)
+    {
+        $this->strategy = $strategy;
+    }
 
     /**
      * @return FieldForm[]
@@ -176,6 +183,14 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     public function jsonSerialize()
     {
         return $this->toArray();
+    }
+
+    /**
+     * @return Strategy
+     */
+    public function getStrategy(): Strategy
+    {
+        return $this->strategy;
     }
 
     protected function getIncrementing()

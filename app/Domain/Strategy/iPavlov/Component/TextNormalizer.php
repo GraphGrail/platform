@@ -34,6 +34,6 @@ class TextNormalizer extends Component
 
     public function getFields(): array
     {
-        return (new \App\Domain\Strategy\iPavlov\Component\Form\TextNormalizer())->getFieldsFormObjects();
+        return (new \App\Domain\Strategy\iPavlov\Component\Form\TextNormalizer($this))->getFieldsFormObjects();
     }
 }

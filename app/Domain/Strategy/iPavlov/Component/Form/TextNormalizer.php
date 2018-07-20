@@ -6,9 +6,10 @@
 namespace App\Domain\Strategy\iPavlov\Component\Form;
 
 
+use App\Domain\Strategy\Component\Form\ComponentForm;
 use App\Domain\Strategy\Component\Form\FieldForm;
 
-class TextNormalizer
+class TextNormalizer extends ComponentForm
 {
     protected $labels = [
         'norm_method' => 'Способ приведения слов к нормальной форме: лемматизация - приведение к инфинитиву, стемминг - отбрасывание окончаний',
@@ -33,7 +34,7 @@ class TextNormalizer
 
     protected function getNormMethod()
     {
-        return \Form::select('norm_method', [
+        return \Form::select($this->createName('norm_method'), [
             'lemmatize' => $this->valueLabels['lemmatize'],
             'stem' => $this->valueLabels['stem'],
             'none' => $this->valueLabels['none'],
@@ -43,19 +44,10 @@ class TextNormalizer
 
     protected function getTokenizer()
     {
-        return \Form::select('tokenizer', [
+        return \Form::select($this->createName('tokenizer'), [
             'treebank' => $this->valueLabels['treebank'],
             'word_tokenize' => $this->valueLabels['word_tokenize'],
 
         ], 'treebank');
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    protected function createLabel($name)
-    {
-        return \Form::label($name, $this->labels[$name]);
     }
 }

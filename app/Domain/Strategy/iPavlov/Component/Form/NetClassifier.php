@@ -6,10 +6,11 @@
 namespace App\Domain\Strategy\iPavlov\Component\Form;
 
 
+use App\Domain\Strategy\Component\Form\ComponentForm;
 use App\Domain\Strategy\Component\Form\FieldForm;
 use Illuminate\Support\HtmlString;
 
-class NetClassifier
+class NetClassifier extends ComponentForm
 {
     protected $labels = [
         'architecture' => 'Тип архитектуры ИНС',
@@ -115,75 +116,66 @@ class NetClassifier
 
     protected function get_architecture()
     {
-        return \Form::select('architecture', $this->variants['architecture'], 'dcnn');
+        return \Form::select($this->createName('architecture'), $this->variants['architecture'], 'dcnn');
     }
 
     protected function get_loss()
     {
-        return \Form::select('loss', $this->variants['loss'], 'categorical_crossentropy');
+        return \Form::select($this->createName('loss'), $this->variants['loss'], 'categorical_crossentropy');
     }
 
     protected function get_metrics()
     {
-        return \Form::select('metrics', $this->variants['metrics'], 'categorical_accuracy');
+        return \Form::select($this->createName('metrics'), $this->variants['metrics'], 'categorical_accuracy');
     }
 
     protected function get_optimizer()
     {
-        return \Form::select('optimizer', $this->variants['optimizer'], 'adam');
+        return \Form::select($this->createName('optimizer'), $this->variants['optimizer'], 'adam');
     }
 
     protected function get_emb_dim()
     {
-        return \Form::number('emb_dim', 25);
+        return \Form::number($this->createName('emb_dim'), 25);
     }
 
     protected function get_seq_len()
     {
-        return \Form::number('seq_len', 50);
+        return \Form::number($this->createName('seq_len'), 50);
     }
 
     protected function get_pool_size()
     {
-        return \Form::number('pool_size', 4);
+        return \Form::number($this->createName('pool_size'), 4);
     }
 
     protected function get_dropout_power()
     {
-        return \Form::number('dropout_power', 0.5);
+        return \Form::number($this->createName('dropout_power'), 0.5);
     }
 
     protected function get_l2_power()
     {
-        return \Form::number('l2_power', 1e-4);
+        return \Form::number($this->createName('l2_power'), 1e-4);
     }
 
     protected function get_n_classes()
     {
-        return \Form::number('n_classes', 5);
+        return \Form::number($this->createName('n_classes'), 5);
     }
 
     protected function get_classes()
     {
-        return \Form::text('classes');
+        return \Form::text($this->createName('classes'));
     }
 
     protected function get_save_path()
     {
-        return \Form::text('save_path');
+        return \Form::text($this->createName('save_path'));
     }
 
     protected function get_load_path()
     {
-        return \Form::text('load_path');
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    protected function createLabel($name)
-    {
-        return \Form::label($name, $this->labels[$name] ?? $name);
+        return \Form::text($this->createName('load_path'));
     }
 }
