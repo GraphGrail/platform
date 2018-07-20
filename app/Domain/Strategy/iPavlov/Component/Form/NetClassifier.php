@@ -63,14 +63,14 @@ class NetClassifier extends ComponentForm
             'hinge' => 'hinge',
         ],
         'metrics' => [
-            'categorical_accuracy',
-            'accuracy',
+            'categorical_accuracy' => 'categorical_accuracy',
+            'accuracy' => 'accuracy',
         ],
         'optimizer' => [
-            'adam',
-            'rmsprop',
-            'SGD',
-            'momentum',
+            'adam' => 'adam',
+            'rmsprop' => 'rmsprop',
+            'SGD' => 'SGD',
+            'momentum' => 'momentum',
         ],
     ];
 
@@ -95,17 +95,17 @@ class NetClassifier extends ComponentForm
 
         $fields[] = [
             $this->createLabel('layers[units]'),
-            \Form::number('layers[units]', 1024),
+            \Form::number($this->createName('layers[0][units]'), 1024),
         ];
 
         $fields[] = [
             $this->createLabel('layers[kernel_size]'),
-            \Form::number('layers[kernel_size]', 2),
+            \Form::number($this->createName('layers[0][kernel_size]'), 2),
         ];
 
         $fields[] = [
             $this->createLabel('layers[activation]'),
-            \Form::number('layers[activation]', 'relu'),
+            \Form::text($this->createName('layers[0][activation]'), 'relu'),
         ];
         $result[] = implode('<br>', array_map(function ($data) {return implode('', $data);}, $fields));
 

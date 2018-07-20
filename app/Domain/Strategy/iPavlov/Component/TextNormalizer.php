@@ -6,7 +6,9 @@
 namespace App\Domain\Strategy\iPavlov\Component;
 
 
-use Illuminate\Validation\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Validator;
 
 class TextNormalizer extends Component
 {
@@ -22,13 +24,21 @@ class TextNormalizer extends Component
         return 'Нормализатор текста. Удаляет неинформативный текст (ссылки, e-mail адреса, числа). Приводит слова к нормальной форме.';
     }
 
+    /**
+     * @param $data
+     * @return bool
+     * @throws ValidationException
+     */
     public function validate($data): bool
     {
-        /** @var Validator $validator */
-        $validator = Validator::make($data, [
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make($data, [
             'norm_method' => ['required', Rule::in($this->values['norm_method'])],
             'tokenizer' => ['required', Rule::in($this->values['tokenizer'])],
         ]);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
         return $validator->passes();
     }
 

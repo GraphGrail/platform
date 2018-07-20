@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ComponentRelation extends Model
 {
+    protected $fillable = ['configuration_id', 'component_class', 'component_attributes'];
     protected $casts = [
         'component_attributes' => 'array',
     ];

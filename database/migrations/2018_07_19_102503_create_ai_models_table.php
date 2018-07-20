@@ -31,6 +31,6 @@ class CreateAiModelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('component_ai_models');
+        Schema::dropIfExists('ai_models');
     }
 }

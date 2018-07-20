@@ -17,6 +17,7 @@ class CreateDatasetsTable extends Migration
             $table->bigIncrements('id');
             $table->timestamps();
             $table->integer('user_id', false, true)->nullable(false);
+            $table->integer('status')->nullable();
             $table->string('name')->nullable(false);
             $table->string('file');
         });

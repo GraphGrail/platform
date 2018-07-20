@@ -216,4 +216,9 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     protected function usesTimestamps() {
         return false;
     }
+
+    public function __toString()
+    {
+        return \get_class($this);
+    }
 }

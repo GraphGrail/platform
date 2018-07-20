@@ -19,9 +19,24 @@ abstract class ComponentForm
         $this->component = $component;
     }
 
-    protected function getPrefix(): string
+    protected function getStrategyPrefix(): string
+    {
+        return \get_class($this->component->getStrategy());
+    }
+
+    protected function getComponentPrefix(): string
     {
         return \get_class($this->component);
+    }
+
+    public function getPrefix()
+    {
+        return $this->getStrategyPrefix().'['.$this->getComponentPrefix().']';
+    }
+
+    protected function createName($name)
+    {
+        return $this->getPrefix().'['.$name.']';
     }
 
     /**
@@ -31,10 +46,5 @@ abstract class ComponentForm
     protected function createLabel($name)
     {
         return \Form::label($this->createName($name), $this->labels[$name]);
-    }
-
-    protected function createName($name)
-    {
-        return $this->getPrefix().'['.$name.']';
     }
 }

@@ -7,7 +7,9 @@ namespace App\Domain\Strategy\iPavlov\Component;
 
 
 use App\Domain\Strategy\iPavlov\Component\Validator\NetClassifier\LayersRule;
-use Illuminate\Validation\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Validator;
 
 class NetClassifier extends Component
 {
@@ -44,28 +46,36 @@ class NetClassifier extends Component
         return 'Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности.';
     }
 
+    /**
+     * @param $data
+     * @return bool
+     * @throws ValidationException
+     */
     public function validate($data): bool
     {
-        /** @var Validator $validator */
+        /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
             'architecture' => ['required', Rule::in($this->values['architecture'])],
             'loss' => ['required', Rule::in($this->values['loss'])],
-            'metrics' => [Rule::in($this->values['metrics'])],
+            'metrics' => ['nullable', Rule::in($this->values['metrics'])],
             'optimizer' => ['required', Rule::in($this->values['optimizer'])],
-            'layers' => ['array', new LayersRule()],
-            'emb_dim' => 'integer',
-            'seq_len' => 'integer',
-            'pool_size' => 'integer',
-            'dropout_power' => 'numeric',
-            'l2_power' => 'float',
-            'n_classes' => 'integer',
+            'layers' => ['nullable|array', new LayersRule()],
+            'emb_dim' => 'nullable|integer',
+            'seq_len' => 'nullable|integer',
+            'pool_size' => 'nullable|integer',
+            'dropout_power' => 'nullable|numeric',
+            'l2_power' => 'nullable|numeric',
+            'n_classes' => 'nullable|integer',
 
             //todo paths?
-            'classes' => 'string',
-            'save_path' => 'string',
-            'load_path' => 'string',
+            'classes' => 'nullable|string',
+            'save_path' => 'nullable|string',
+            'load_path' => 'nullable|string',
         ]);
-        return $validator->passes();
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+        return true;
     }
 
     public function getAttributeForm($attribute): array

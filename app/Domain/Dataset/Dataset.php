@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Domain\Dataset
  * @property integer id
  * @property integer user_id
+ * @property integer status
  * @property string name
  * @property string file
  * @property Data[] data
@@ -20,6 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dataset extends Model
 {
+    public const STATUS_NEW = 100;
+    public const STATUS_FILLING = 200;
+    public const STATUS_READY = 300;
+
     protected $fillable = ['user_id', 'file', 'name', 'label_group_id'];
 
     public function data()
@@ -30,5 +35,10 @@ class Dataset extends Model
     public function labelGroup()
     {
         return $this->belongsTo(LabelGroup::class);
+    }
+
+    public function isReady(): bool
+    {
+        return $this->status === self::STATUS_READY;
     }
 }

@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Domain;
 
 use App\Domain\AiModel;
+use App\Domain\Configuration;
+use App\Domain\Dataset\Dataset;
 use App\Domain\Strategy\StrategyProvider;
+use http\Exception\RuntimeException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 
 class AiModelController extends Controller
 {
@@ -25,6 +30,7 @@ class AiModelController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param StrategyProvider $provider
      * @return \Illuminate\Http\Response
      */
     public function create(StrategyProvider $provider)
@@ -32,6 +38,7 @@ class AiModelController extends Controller
         return view('domain/ai_models/form', [
                 'model' => new AiModel(['user_id' => Auth::id()]),
                 'provider' => $provider,
+                'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
             ]
         );
     }
@@ -40,15 +47,51 @@ class AiModelController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
+     * @param StrategyProvider $provider
      * @return \Illuminate\Http\RedirectResponse
+     * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request, StrategyProvider $provider)
     {
+        $request->validate([
+            'strategy' => 'required',
+        ]);
 
+        $strategy = $provider->get($request->get('strategy'));
+        $datasetId = $request->get('dataset');
 
+        $data = $request->get(\get_class($strategy));
 
+        foreach ($strategy->getComponents() as $component) {
+            $component->validate($data[\get_class($component)]);
+        }
 
-        return Redirect::to('ai-models');
+        $config = new Configuration([
+            'user_id' => Auth::id(),
+            'strategy_class' => $request['strategy'],
+        ]);
+        if (!$config->save()) {
+            throw new RuntimeException('Configuration not saved');
+        }
+        foreach ($strategy->getComponents() as $component) {
+            $class = \get_class($component);
+            $link = new Configuration\ComponentRelation([
+                'component_class' => $class,
+                'component_attributes' => $data[$class],
+            ]);
+            $config->componentRelations()->save($link);
+        }
+
+        $model = new AiModel([
+            'user_id' => Auth::id(),
+            'status' => AiModel::STATUS_NEW,
+            'dataset_id' => $datasetId,
+            'configuration_id' => $config->id,
+        ]);
+        if (!$model->save()) {
+            throw new RuntimeException('Configuration not saved');
+        }
+        return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 
     /**

@@ -18,8 +18,8 @@ class CreateComponentRelationsTable extends Migration
             $table->timestamps();
 
             $table->bigInteger('configuration_id')->nullable(false);
-            $table->string('component_class')->nullable(false);
-            $table->string('component_attributes')->nullable();
+            $table->text('component_class')->nullable(false);
+            $table->longText('component_attributes')->nullable();
         });
     }
 

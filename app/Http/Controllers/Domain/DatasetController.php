@@ -68,6 +68,7 @@ class DatasetController extends Controller
             'file' => $path,
             'name' => $request->file('dataset')->getClientOriginalName(),
             'user_id' => $userId,
+            'status' => Dataset::STATUS_NEW,
         ]);
         $dataset->labelGroup()->associate($group);
         $dataset->save();

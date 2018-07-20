@@ -17,13 +17,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer id
  * @property integer user_id
  * @property string strategy_class
- * @property AiModel model
+ * @property AiModel[] models
  */
 class Configuration extends Model
 {
     protected $_components;
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id', 'strategy_class'];
 
     public function componentRelations()
     {
@@ -59,9 +59,9 @@ class Configuration extends Model
         return $this->_components ?? [];
     }
 
-    public function model()
+    public function models()
     {
-        return $this->hasOne(AiModel::class);
+        return $this->hasMany(AiModel::class);
     }
 
     public function strategy(): ?Strategy
@@ -70,7 +70,7 @@ class Configuration extends Model
             return null;
         }
         if (!class_exists($this->strategy_class)) {
-            throw new \RuntimeException("Strategy class doesn\'t exist: {$this->strategy_class}");
+            throw new \RuntimeException("Strategy class doesn't exist: {$this->strategy_class}");
         }
         /** @var StrategyProvider $provider */
         $provider = app()->get(StrategyProvider::class);
@@ -79,7 +79,7 @@ class Configuration extends Model
 
     public function fillComponent(Component $component): Configuration
     {
-        if (!$exist = $this->components()[get_class($component)]) {
+        if (!$exist = $this->components()[\get_class($component)]) {
             return $this;
         }
         $component->setRawAttributes($exist->getAttributes());

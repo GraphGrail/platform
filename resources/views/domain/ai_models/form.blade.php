@@ -7,6 +7,11 @@
 $method = $model->id ? 'put' : 'post';
 
 /** @var \App\Domain\Strategy\StrategyProvider $provider */
+/** @var \App\Domain\Dataset\Dataset[] $datasets */
+
+$datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Dataset $d) {
+    return [$d->id => $d->name];
+})->prepend('None', 0)->all();
 ?>
 <h1>Ai model form</h1>
 @if ($errors->any())
@@ -24,8 +29,12 @@ $method = $model->id ? 'put' : 'post';
 
 <form method="{{ $method }}" action="{{ route('ai-models.store') }}">
     @csrf
+    <p>
+        {{ \Form::label('dataset', 'Dataset') }}
+        {{ \Form::select('dataset', $datasets) }}
+    </p>
     @foreach($provider->all() as $strategy)
-        <label class="">{{ $strategy->name() }}</label>
+        {{ $strategy->getForm() }}
         @foreach($strategy->getComponents() as $component)
             <div>
                 <p>{{ $component->description() }}</p>

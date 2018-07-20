@@ -70,6 +70,8 @@ class ExtractDatasetData implements ShouldQueue
             $data = new Data(['text' => $text, 'label_id' => $label->id]);
             $this->dataset->data()->save($data);
         }
+        $this->dataset->status = Dataset::STATUS_READY;
+        $this->dataset->save();
     }
 
     private function createLabel(LabelGroup $group, string $text): Label
