@@ -24,6 +24,7 @@ abstract class Strategy
     }
 
     abstract public function learn(AiModel $model, Dataset $dataset): Strategy;
+    abstract public function status(AiModel $model): Strategy;
     abstract public function exec(AiModel $model): Result;
     abstract public function name(): string;
 

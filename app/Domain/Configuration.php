@@ -7,6 +7,7 @@ namespace App\Domain;
 
 
 use App\Domain\Configuration\ComponentRelation;
+use App\Domain\Exception\ConfigurationException;
 use App\Domain\Strategy\Strategy;
 use App\Domain\Strategy\StrategyProvider;
 use Illuminate\Database\Eloquent\Model;
@@ -64,13 +65,17 @@ class Configuration extends Model
         return $this->hasMany(AiModel::class);
     }
 
+    /**
+     * @return Strategy|null
+     * @throws ConfigurationException
+     */
     public function strategy(): ?Strategy
     {
         if (!$this->strategy_class) {
             return null;
         }
         if (!class_exists($this->strategy_class)) {
-            throw new \RuntimeException("Strategy class doesn't exist: {$this->strategy_class}");
+            throw new ConfigurationException("Strategy class doesn't exist: {$this->strategy_class}");
         }
         /** @var StrategyProvider $provider */
         $provider = app()->get(StrategyProvider::class);

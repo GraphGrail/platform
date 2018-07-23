@@ -35,6 +35,7 @@ class ExtractDatasetData implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws \League\Csv\Exception
      */
     public function handle()
     {

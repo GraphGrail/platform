@@ -6,6 +6,8 @@
 namespace App\Domain\Strategy;
 
 
+use App\Domain\Exception\Exception;
+
 class Provider implements StrategyProvider
 {
 
@@ -30,6 +32,11 @@ class Provider implements StrategyProvider
         return $this->list;
     }
 
+    /**
+     * @param string $class
+     * @return Strategy
+     * @throws Exception
+     */
     public function get(string $class): Strategy
     {
         foreach ($this->all() as $item) {
@@ -37,6 +44,6 @@ class Provider implements StrategyProvider
                 return $item;
             }
         }
-        throw new \RuntimeException(sprintf("Provider `%s` doesn't provide {$class} strategy", \get_class($this)));
+        throw new Exception(sprintf("Provider `%s` doesn't provide {$class} strategy", \get_class($this)));
     }
 }

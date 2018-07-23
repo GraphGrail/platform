@@ -12,5 +12,6 @@ return [
             \App\Domain\Strategy\iPavlov\Component\Embedder::class,
             \App\Domain\Strategy\iPavlov\Component\NetClassifier::class,
         ],
+        'url' => env('AI_IPAVLOV_URI'),
     ],
 ];
