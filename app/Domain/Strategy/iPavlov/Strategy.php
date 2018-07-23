@@ -47,11 +47,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $this->client = new Client($guzzle);
     }
 
-    public function learn(AiModel $model, Dataset $dataset): \App\Domain\Strategy\Strategy
+    public function train(AiModel $model, Dataset $dataset): \App\Domain\Strategy\Strategy
     {
         $config = $this->createJsonConfiguration($model->configuration);
         $requestData = [
             'model' => $model->id,
+            'dataset' => $dataset->file,
             'config' => $config,
         ];
 
@@ -85,13 +86,24 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
-    public function exec(AiModel $model): Result
+    public function exec(AiModel $model, $data = null): Result
     {
-        if ($model->status !== AiModel::STATUS_READY) {
-            throw new RuntimeException('Model is not ready');
+        if ($model->status === AiModel::STATUS_NEW) {
+            return $this->startTrain($model);
         }
+        if ($model->status === AiModel::STATUS_LEARNED) {
+            return $this->startTesting($model);
+        }
+        if ($model->status === AiModel::STATUS_READY) {
+            return $this->doRequest($model, $data);
+        }
+        throw new RuntimeException('The model not ready: ' . $model->statusLabel());
+    }
+
+    protected function doRequest(AiModel $model, $data)
+    {
         $response = $this->client->post('/exec', [
-            RequestOptions::JSON => ['model' => $model->id],
+            RequestOptions::JSON => ['model' => $model->id, 'data' => $data],
         ]);
         return new Result($response->getBody()->getContents());
     }
@@ -167,5 +179,18 @@ class Strategy extends \App\Domain\Strategy\Strategy
                     'log_every_n_epochs' => 1,
                 ],
         ];
+    }
+
+    protected function startTrain(AiModel $model): Result
+    {
+        $this->train($model, $model->dataset);
+        return new Result();
+    }
+
+    private function startTesting(AiModel $model): Result
+    {
+        $model->status = AiModel::STATUS_READY;
+        $model->save();
+        return new Result();
     }
 }

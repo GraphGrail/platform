@@ -8,7 +8,6 @@ namespace App\Domain\Strategy;
 
 use App\Domain\AiModel;
 use App\Domain\Component;
-use App\Domain\Dataset\Dataset;
 use Illuminate\Support\HtmlString;
 
 abstract class Strategy
@@ -23,10 +22,10 @@ abstract class Strategy
         return $this->components;
     }
 
-    abstract public function learn(AiModel $model, Dataset $dataset): Strategy;
-    abstract public function status(AiModel $model): Strategy;
-    abstract public function exec(AiModel $model): Result;
     abstract public function name(): string;
+    abstract public function exec(AiModel $model, $data = null): Result;
+
+    abstract public function status(AiModel $model): Strategy;
 
     public function getForm(string $selected = null)
     {

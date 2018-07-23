@@ -42,10 +42,14 @@ class AiModelCheckStatusCommand extends Command
         AiModel::query()->where(['status' => AiModel::STATUS_LEARNING])->chunk(200, function (Collection $models) {
             /** @var AiModel $model */
             foreach ($models as $model) {
-                if (!$strategy = $model->configuration->strategy()) {
-                    continue;
+                try {
+                    if (!$strategy = $model->configuration->strategy()) {
+                        continue;
+                    }
+                    $strategy->status($model);
+                } catch (\Throwable $e) {
+                    \Log::error($e->getMessage());
                 }
-                $strategy->status($model);
             }
         });
     }

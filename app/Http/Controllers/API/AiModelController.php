@@ -17,7 +17,7 @@ class AiModelController extends Controller
      * @throws ConfigurationException
      * @throws \InvalidArgumentException
      */
-    public function get(AiModel $model, Request $request)
+    public function exec(AiModel $model, Request $request)
     {
         if (!$data = $request->get('data')) {
             throw new \InvalidArgumentException('Empty data for execution');

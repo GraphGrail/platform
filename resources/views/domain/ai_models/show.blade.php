@@ -10,7 +10,7 @@
 
 @if($model->status === \App\Domain\AiModel::STATUS_NEW)
     <div>
-    <form method="POST" action="{{ url('ai-models/learn', ['model' => $model]) }}">
+    <form method="POST" action="{{ url('ai-models/train', ['model' => $model]) }}">
         @csrf
         <input type="hidden" name="model" value="{{ $model->id }}">
         <input type="hidden" name="dataset" value="{{ $model->dataset->id }}">

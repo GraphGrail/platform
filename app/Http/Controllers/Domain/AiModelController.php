@@ -138,17 +138,19 @@ class AiModelController extends Controller
         //
     }
 
-    public function learn(AiModel $model, Request $request)
+    public function train(AiModel $model, Request $request)
     {
         if (!$strategy = $model->configuration->strategy()) {
             throw new RuntimeException('Strategy not set');
         }
         /** @var Dataset $dataset */
-        if (!$dataset = Dataset::query()->find($request->get('dataset'))) {
+        if (!$dataset = Dataset::query()->find($request->get('dataset')) ) {
             throw new RuntimeException('Empty dataset');
         }
-
-        $strategy->learn($model, $dataset);
+        if ($model->status >= AiModel::STATUS_READY) {
+            throw new RuntimeException('The model is already trained');
+        }
+        $strategy->exec($model);
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 }
