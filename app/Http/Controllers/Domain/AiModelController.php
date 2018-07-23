@@ -6,13 +6,12 @@ use App\Domain\AiModel;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Strategy\StrategyProvider;
-use http\Exception\RuntimeException;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Routing\Route;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 class AiModelController extends Controller
 {
@@ -137,5 +136,19 @@ class AiModelController extends Controller
     public function destroy(AiModel $model)
     {
         //
+    }
+
+    public function learn(AiModel $model, Request $request)
+    {
+        if (!$strategy = $model->configuration->strategy()) {
+            throw new RuntimeException('Strategy not set');
+        }
+        /** @var Dataset $dataset */
+        if (!$dataset = Dataset::query()->find($request->get('dataset'))) {
+            throw new RuntimeException('Empty dataset');
+        }
+
+        $strategy->learn($model, $dataset);
+        return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 }

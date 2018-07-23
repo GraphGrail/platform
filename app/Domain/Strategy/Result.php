@@ -14,4 +14,9 @@ class Result
     {
         $this->data = $data;
     }
+
+    public function getData()
+    {
+        return $this->data;
+    }
 }

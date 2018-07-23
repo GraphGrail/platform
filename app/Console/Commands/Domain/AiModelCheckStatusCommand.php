@@ -4,6 +4,7 @@ namespace App\Console\Commands\Domain;
 
 use App\Domain\AiModel;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class AiModelCheckStatusCommand extends Command
 {
@@ -38,7 +39,7 @@ class AiModelCheckStatusCommand extends Command
      */
     public function handle()
     {
-        AiModel::query()->where(['status' => AiModel::STATUS_LEARNING])->chunk(200, function (array $models) {
+        AiModel::query()->where(['status' => AiModel::STATUS_LEARNING])->chunk(200, function (Collection $models) {
             /** @var AiModel $model */
             foreach ($models as $model) {
                 if (!$strategy = $model->configuration->strategy()) {

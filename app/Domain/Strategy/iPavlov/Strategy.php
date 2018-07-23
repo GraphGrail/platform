@@ -12,7 +12,7 @@ use App\Domain\Dataset\Dataset;
 use App\Domain\Strategy\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use http\Exception\RuntimeException;
+use \RuntimeException;
 
 class Strategy extends \App\Domain\Strategy\Strategy
 {
@@ -70,14 +70,14 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
     public function status(AiModel $model): \App\Domain\Strategy\Strategy
     {
-        $response = $this->client->post('/status', [
+        $response = $this->client->get('/status', [
             RequestOptions::JSON => ['model' => $model->id],
         ]);
         $content = $response->getBody()->getContents();
-        if (mb_strpos($content, self::RESPONSE_STATUS_READY)) {
+        if (false !== mb_strpos($content, self::RESPONSE_STATUS_READY)) {
             $model->status = AiModel::STATUS_READY;
         }
-        if (mb_strpos($content, self::RESPONSE_STATUS_LEARNING)) {
+        if (false !== mb_strpos($content, self::RESPONSE_STATUS_LEARNING)) {
             $model->status = AiModel::STATUS_READY;
         }
 
