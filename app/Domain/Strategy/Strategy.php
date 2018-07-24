@@ -33,4 +33,9 @@ abstract class Strategy
 
         return new HtmlString(\Form::label('ipavlov', $this->name()) . \Form::radio('strategy', $name, $name === $selected, ['id' => 'ipavlov']));
     }
+
+    public function getFormName(): string
+    {
+        return \get_class($this);
+    }
 }

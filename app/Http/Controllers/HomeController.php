@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\AiModel;
+use App\Domain\Dataset\Dataset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +26,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $datasets = Dataset::query()->where(['user_id' => Auth::id()])->get()->all();
+        $models = AiModel::query()->where(['user_id' => Auth::id()])->get()->all();
+
+        return view('home', [
+            'datasets' => $datasets,
+            'models' => $models,
+        ]);
     }
 }

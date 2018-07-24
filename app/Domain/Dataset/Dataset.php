@@ -41,4 +41,18 @@ class Dataset extends Model
     {
         return $this->status === self::STATUS_READY;
     }
+
+    public function statusLabel(): string
+    {
+        return $this->statuses()[$this->status];
+    }
+
+    public function statuses(): array
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_FILLING => 'Filling',
+            self::STATUS_READY => 'Ready',
+        ];
+    }
 }

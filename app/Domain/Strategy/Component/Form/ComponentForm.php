@@ -11,6 +11,7 @@ use App\Domain\Component;
 abstract class ComponentForm
 {
     protected $component;
+    protected $class = 'form-control m-input m-input--air';
 
     protected $labels = [];
 

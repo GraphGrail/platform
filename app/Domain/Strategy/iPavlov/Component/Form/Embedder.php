@@ -27,14 +27,14 @@ class Embedder extends ComponentForm
 
     public function getFieldsFormObjects(): array
     {
-        $type = new FieldForm($this->createLabel('emb_type'), $this->getType());
+        $type = new FieldForm($this->createLabel('emb_type'), $this->getType(), ['class' => $this->class]);
 
         return [$type];
     }
 
     protected function getType()
     {
-        return \Form::select($this->createName('emb_type'), $this->valueLabels, 'pretrained_compressed');
+        return \Form::select($this->createName('emb_type'), $this->valueLabels, 'pretrained_compressed', ['class' => $this->class]);
     }
 
 }

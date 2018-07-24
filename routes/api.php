@@ -14,5 +14,5 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->group(function () {
-    Route::post('/exec/{model}', 'API\AiModelController@exec');
+    Route::post('/exec/{model}', 'API\AiModelController@exec')->name('api.exec');
 });

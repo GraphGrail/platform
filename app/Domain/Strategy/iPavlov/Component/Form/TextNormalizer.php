@@ -39,7 +39,7 @@ class TextNormalizer extends ComponentForm
             'stem' => $this->valueLabels['stem'],
             'none' => $this->valueLabels['none'],
 
-        ], 'lemmatize');
+        ], 'lemmatize', ['class' => $this->class]);
     }
 
     protected function getTokenizer()
@@ -48,6 +48,6 @@ class TextNormalizer extends ComponentForm
             'treebank' => $this->valueLabels['treebank'],
             'word_tokenize' => $this->valueLabels['word_tokenize'],
 
-        ], 'treebank');
+        ], 'treebank', ['class' => $this->class]);
     }
 }

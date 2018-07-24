@@ -31,7 +31,7 @@ class NetClassifier extends ComponentForm
 
         'layers[type]' => 'Тип архитектуры для слоя',
         'layers[activation]' => 'Функиция активации',
-        'layers[units]' => 'Units',
+        'layers[units]' => 'Кол-во нейронов',
         'layers[kernel_size]' => 'Размер ядра',
     ];
 
@@ -99,30 +99,31 @@ class NetClassifier extends ComponentForm
 
     protected function get_layers()
     {
-        $result = ['<div class="component-field-layers component-field-repeatable">'];
+        $result = ['<div class="component-field-layers component-field-repeatable alert m-alert m-alert--default">'];
 
         $fields = [];
 
         $fields[] = [
             $this->createLabel('layers[type]'),
-            \Form::select($this->createName('layers[0][arch]'), $this->variants['layers'], 'bilstm_layers'),
+            \Form::select($this->createName('layers[arch]') . '[]', $this->variants['layers'], 'bilstm_layers', ['class' => $this->class]),
         ];
 
         $fields[] = [
             $this->createLabel('layers[units]'),
-            \Form::number($this->createName('layers[0][units]'), 1024),
+            \Form::number($this->createName('layers[units]') . '[]', 1024, ['class' => $this->class]),
         ];
 
         $fields[] = [
             $this->createLabel('layers[kernel_size]'),
-            \Form::number($this->createName('layers[0][kernel_size]'), 2),
+            \Form::number($this->createName('layers[kernel_size]') . '[]', 2, ['class' => $this->class]),
         ];
 
         $fields[] = [
             $this->createLabel('layers[activation]'),
-            \Form::select($this->createName('layers[0][activation]'), $this->variants['activation'], 'relu'),
+            \Form::select($this->createName('layers[activation]') . '[]', $this->variants['activation'], 'relu', ['class' => $this->class]),
         ];
-        $result[] = implode('<br>', array_map(function ($data) {return implode('', $data);}, $fields));
+        $result[] = implode('', array_map(function ($data) {return implode('', $data);}, $fields));
+        $result[] = '<div class="m-form__actions">' . \Form::button('+' . __('Add'), ['class' => 'btn m-btn--pill m-btn--air btn-info add-repeatable']) . '</div>';
 
         $result[] = '</div>';
 
@@ -131,66 +132,66 @@ class NetClassifier extends ComponentForm
 
     protected function get_architecture()
     {
-        return \Form::select($this->createName('architecture'), $this->variants['architecture'], 'dcnn');
+        return \Form::select($this->createName('architecture'), $this->variants['architecture'], 'dcnn', ['class' => $this->class]);
     }
 
     protected function get_loss()
     {
-        return \Form::select($this->createName('loss'), $this->variants['loss'], 'categorical_crossentropy');
+        return \Form::select($this->createName('loss'), $this->variants['loss'], 'categorical_crossentropy', ['class' => $this->class]);
     }
 
     protected function get_metrics()
     {
-        return \Form::select($this->createName('metrics'), $this->variants['metrics'], 'categorical_accuracy');
+        return \Form::select($this->createName('metrics'), $this->variants['metrics'], 'categorical_accuracy', ['class' => $this->class]);
     }
 
     protected function get_optimizer()
     {
-        return \Form::select($this->createName('optimizer'), $this->variants['optimizer'], 'adam');
+        return \Form::select($this->createName('optimizer'), $this->variants['optimizer'], 'adam', ['class' => $this->class]);
     }
 
     protected function get_emb_dim()
     {
-        return \Form::number($this->createName('emb_dim'), 25);
+        return \Form::number($this->createName('emb_dim'), 25, ['class' => $this->class]);
     }
 
     protected function get_seq_len()
     {
-        return \Form::number($this->createName('seq_len'), 50);
+        return \Form::number($this->createName('seq_len'), 50, ['class' => $this->class]);
     }
 
     protected function get_pool_size()
     {
-        return \Form::number($this->createName('pool_size'), 4);
+        return \Form::number($this->createName('pool_size'), 4, ['class' => $this->class]);
     }
 
     protected function get_dropout_power()
     {
-        return \Form::number($this->createName('dropout_power'), 0.5);
+        return \Form::number($this->createName('dropout_power'), 0.5, ['class' => $this->class]);
     }
 
     protected function get_l2_power()
     {
-        return \Form::number($this->createName('l2_power'), 1e-4);
+        return \Form::number($this->createName('l2_power'), 1e-4, ['class' => $this->class]);
     }
 
     protected function get_n_classes()
     {
-        return \Form::number($this->createName('n_classes'), 5);
+        return \Form::number($this->createName('n_classes'), 5, ['class' => $this->class]);
     }
 
     protected function get_classes()
     {
-        return \Form::text($this->createName('classes'));
+        return \Form::text($this->createName('classes'), ['class' => $this->class]);
     }
 
     protected function get_save_path()
     {
-        return \Form::text($this->createName('save_path'));
+        return \Form::text($this->createName('save_path'), ['class' => $this->class]);
     }
 
     protected function get_load_path()
     {
-        return \Form::text($this->createName('load_path'));
+        return \Form::text($this->createName('load_path'), ['class' => $this->class]);
     }
 }

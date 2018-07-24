@@ -12,14 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (!\Illuminate\Support\Facades\Auth::id()) {
+        return redirect()->route('login');
+    }
+    return redirect()->route('home');
 });
 
 Auth::routes();
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/', 'HomeController@index')->name('home');
 
     Route::get('/datasets/download/{dataset}', 'Domain\DatasetController@download')->name('datasets.download');
     Route::resource('datasets', 'Domain\DatasetController');
