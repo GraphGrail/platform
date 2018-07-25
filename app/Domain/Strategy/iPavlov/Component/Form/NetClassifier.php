@@ -100,7 +100,7 @@ class NetClassifier extends ComponentForm
     protected function get_layers()
     {
         $result = [];
-        foreach ($this->component->layers_arch as $index => $layers_arch) {
+        foreach ((array)$this->component->layers_arch as $index => $layers_arch) {
             $data = [
                 'layers_arch' => $this->component->layers_arch[$index],
                 'layers_units' => $this->component->layers_units[$index],

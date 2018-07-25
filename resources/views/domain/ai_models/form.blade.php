@@ -66,7 +66,7 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
                     <div class="m-portlet__body">
                         <div class="form-group m-form__group">
                             {{ \Form::label('dataset', 'Dataset') }}
-                            {{ \Form::select('dataset', $datasets, null,['class' => 'form-control m-input m-input--air']) }}
+                            {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
                         </div>
                         @foreach($strategy->getComponents($model->configuration) as $component)
                             <div class="m-portlet__head">

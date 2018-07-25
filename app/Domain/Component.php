@@ -214,6 +214,11 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
         return [];
     }
 
+    public function getRelationValue($key)
+    {
+        return null;
+    }
+
     protected function usesTimestamps() {
         return false;
     }

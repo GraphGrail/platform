@@ -17,6 +17,7 @@
             @if ($model->dataset)
                 <a href="{{ route('datasets.download', ['dataset' => $model->dataset]) }}"
                    class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ route('ai-models.edit', ['model' => $model]) }}">Edit</a>
             @else
                 <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ route('ai-models.edit', ['model' => $model]) }}">Empty dataset</a>
             @endif
