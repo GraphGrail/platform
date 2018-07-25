@@ -9,6 +9,7 @@ namespace App\Domain\Strategy\iPavlov;
 use App\Domain\AiModel;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
+use App\Domain\Dataset\Storage;
 use App\Domain\Strategy\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -52,7 +53,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $config = $this->createJsonConfiguration($model->configuration);
         $requestData = [
             'model' => $model->id,
-            'dataset' => $dataset->file,
+            'dataset' => (new Storage())->getPath($dataset),
             'config' => $config,
         ];
 
