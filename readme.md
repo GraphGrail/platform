@@ -10,6 +10,7 @@
 - `npm install`
 - `php artisan key:generate `
 - `php artisan migrate`
+- Добавить в крон `* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1`
 - На супервизор повесить `php artisan horizon`
 
 Пример конфигурации с офф сайта 
