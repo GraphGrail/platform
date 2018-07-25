@@ -213,7 +213,7 @@ class AiModelController extends Controller
         if (!$strategy = $model->configuration->strategy()) {
             throw new RuntimeException('Strategy not set');
         }
-        $result = $strategy->exec($model, $request->get('text'));
+        $result = $strategy->exec($model, $request->get('api_query'));
         return view('domain/ai_models/show', ['model' => $model, 'result' => $result]);
     }
 }

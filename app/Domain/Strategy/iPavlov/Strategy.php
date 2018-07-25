@@ -105,7 +105,9 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $response = $this->client->post('/exec', [
             RequestOptions::JSON => ['model' => $model->id, 'data' => $data],
         ]);
-        return new Result($response->getBody()->getContents());
+        $result = new Result($data, $response->getBody()->getContents());
+        $this->logResult($model, $result);
+        return $result;
     }
 
     public function name(): string
@@ -192,5 +194,16 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $model->status = AiModel::STATUS_READY;
         $model->save();
         return new Result();
+    }
+
+    private function logResult(AiModel $model, Result $result)
+    {
+        $log = new AiModel\Stat([
+            'user_id' => $model->user_id,
+            'model_id' => $model->id,
+            'result' => $result->getData(),
+            'query' => $result->getQuery(),
+        ]);
+        $log->save();
     }
 }

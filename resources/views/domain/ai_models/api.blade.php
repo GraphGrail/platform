@@ -29,7 +29,7 @@
             </div>
             <div class="form-group m-form__group">
                 <label for="exampleTextarea">Text</label>
-                <textarea class="form-control m-input m-input--air" id="exampleTextarea" rows="3"></textarea>
+                <textarea class="form-control m-input m-input--air" id="api_query" name="api_query" rows="3"></textarea>
             </div>
         </div>
         <div class="m-portlet__foot m-portlet__foot--fit">
