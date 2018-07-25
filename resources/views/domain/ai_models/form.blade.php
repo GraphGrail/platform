@@ -4,6 +4,8 @@
  */
 
 /** @var \App\Domain\AiModel $model */
+
+$configuration = $model->configuration;
 $method = $model->id ? 'PUT' : 'POST';
 
 $route = $model->id ? route('ai-models.update', ['model' => $model]) : route('ai-models.store');
@@ -66,7 +68,7 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
                             {{ \Form::label('dataset', 'Dataset') }}
                             {{ \Form::select('dataset', $datasets, null,['class' => 'form-control m-input m-input--air']) }}
                         </div>
-                        @foreach($strategy->getComponents() as $component)
+                        @foreach($strategy->getComponents($model->configuration) as $component)
                             <div class="m-portlet__head">
                                 <div class="m-portlet__head-caption">
                                     <div class="m-portlet__head-title">
@@ -92,7 +94,7 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
 
                     <div class="m-portlet__foot m-portlet__foot--fit">
                         <div class="m-form__actions">
-                            <button type="submit" class="btn btn-accent">Submit</button>
+                            <button type="submit" class="btn btn-accent">{{ __('Save') }}</button>
                         </div>
                     </div>
                 </form>
@@ -105,19 +107,10 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
 @section('scripts')
     <script>
         $(document).ready(function () {
-            var updateFields = function() {
-                $('div.component-field-repeatable').each(function (index, element) {
-                    console.log(index);
-                });
-            };
-
-
-
             $('div.component-field-repeatable .add-repeatable').on('click', function () {
                 var fields = $(this).parents('.component-field-repeatable');
                 fields.parent().append(fields.clone(true));
                 $(this).remove();
-                updateFields();
             });
         });
     </script>

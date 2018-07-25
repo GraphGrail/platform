@@ -8,6 +8,7 @@ namespace App\Domain\Strategy;
 
 use App\Domain\AiModel;
 use App\Domain\Component;
+use App\Domain\Configuration;
 use Illuminate\Support\HtmlString;
 
 abstract class Strategy
@@ -15,10 +16,17 @@ abstract class Strategy
     protected $components = [];
 
     /**
+     * @param Configuration|null $hydrator
      * @return Component[]
      */
-    public function getComponents(): array
+    public function getComponents(Configuration $hydrator = null): array
     {
+        if (!$hydrator) {
+            return $this->components;
+        }
+        foreach ($this->components as $component) {
+            $hydrator->fillComponent($component);
+        }
         return $this->components;
     }
 

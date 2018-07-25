@@ -16,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        error_reporting(E_ALL ^ E_NOTICE);
+
         Horizon::auth(function (Request $request) {
             if ($this->app->environment() === 'local') {
                 return true;

@@ -167,7 +167,14 @@ class AiModelController extends Controller
      */
     public function destroy(AiModel $model)
     {
-        //
+        try {
+            $model->dataset->delete();
+            $model->configuration->delete();
+            $model->delete();
+        } catch (\Throwable $e) {
+            \Log::error($e->getMessage());
+        }
+        return Redirect::to(\url('ai-models'));
     }
 
     public function train(AiModel $model, Request $request)
