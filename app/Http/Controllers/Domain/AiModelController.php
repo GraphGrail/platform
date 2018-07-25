@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
@@ -198,5 +199,21 @@ class AiModelController extends Controller
         }
         $strategy->exec($model);
         return Redirect::to(\url('ai-models', ['model' => $model]));
+    }
+
+    public function exec(AiModel $model, Request $request)
+    {
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make($model->toArray(), [
+            'status' => ['required', Rule::in([AiModel::STATUS_READY])],
+        ]);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+        if (!$strategy = $model->configuration->strategy()) {
+            throw new RuntimeException('Strategy not set');
+        }
+        $result = $strategy->exec($model, $request->get('text'));
+        return view('domain/ai_models/show', ['model' => $model, 'result' => $result]);
     }
 }

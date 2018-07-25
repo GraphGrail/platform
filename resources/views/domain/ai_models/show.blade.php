@@ -95,6 +95,7 @@
                     <div class="m-separator m-separator--dashed"></div>
                 </div>
             </div>
+            @include('domain.ai_models.api')
         @endif
     </div>
 @endsection

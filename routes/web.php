@@ -31,5 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::get('labels/{group}', 'Domain\LabelController@show');
 
     Route::post('ai-models/train/{model}', 'Domain\AiModelController@train', ['parameters' => ['ai-models' => 'model']]);
+    Route::post('ai-models/exec/{model}', 'Domain\AiModelController@exec', ['parameters' => ['ai-models' => 'model']])->name('ai-models.exec');
     Route::resource('ai-models', 'Domain\AiModelController', ['parameters' => ['ai-models' => 'model']]);
 });
