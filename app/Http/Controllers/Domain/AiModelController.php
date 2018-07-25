@@ -159,6 +159,7 @@ class AiModelController extends Controller
         }
 
         $model->dataset_id = $datasetId;
+        $model->status = AiModel::STATUS_NEW;
         if (!$model->save()) {
             throw new RuntimeException('Configuration not saved');
         }
