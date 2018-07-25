@@ -39,7 +39,7 @@ class AiModelCheckStatusCommand extends Command
      */
     public function handle()
     {
-        AiModel::query()->where(['status' => AiModel::STATUS_LEARNING])->chunk(200, function (Collection $models) {
+        AiModel::query()->where(['status' => AiModel::STATUS_TRAINING])->chunk(200, function (Collection $models) {
             /** @var AiModel $model */
             foreach ($models as $model) {
                 try {

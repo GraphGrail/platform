@@ -63,7 +63,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
             throw new RuntimeException($response->getBody()->getContents());
         }
 
-        $model->status = AiModel::STATUS_LEARNING;
+        $model->status = AiModel::STATUS_TRAINING;
         $model->save();
 
         return $this;
@@ -91,7 +91,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
         if ($model->status === AiModel::STATUS_NEW) {
             return $this->startTrain($model);
         }
-        if ($model->status === AiModel::STATUS_LEARNED) {
+        if ($model->status === AiModel::STATUS_TRAINED) {
             return $this->startTesting($model);
         }
         if ($model->status === AiModel::STATUS_READY) {

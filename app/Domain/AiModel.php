@@ -20,11 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AiModel extends Model
 {
-    public const STATUS_NEW = 100;
-    public const STATUS_LEARNING = 200;
-    public const STATUS_LEARNED = 300;
-    public const STATUS_TESTING = 400;
-    public const STATUS_READY = 500;
+    public const STATUS_NEW       = 100;
+    public const STATUS_TRAINING  = 200;
+    public const STATUS_TRAINED   = 300;
+    public const STATUS_TESTING   = 400;
+    public const STATUS_READY     = 500;
     public const STATUS_TEST_FAIL = 9000;
 
     protected $fillable = ['user_id', 'status', 'dataset_id', 'configuration_id'];
@@ -48,8 +48,8 @@ class AiModel extends Model
     {
         return [
             self::STATUS_NEW => 'New',
-            self::STATUS_LEARNING => 'Learning',
-            self::STATUS_LEARNED => 'Learned',
+            self::STATUS_TRAINING => 'Training',
+            self::STATUS_TRAINED => 'Trained',
             self::STATUS_TESTING => 'Testing',
             self::STATUS_READY => 'Ready',
             self::STATUS_TEST_FAIL => 'Fail',

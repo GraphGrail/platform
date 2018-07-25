@@ -37,7 +37,7 @@
                     <div class="m-portlet__head-caption">
                         <div class="m-portlet__head-title">
                             <h3 class="m-portlet__head-text">
-                                Start train model
+                                Train model
                             </h3>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                                 @csrf
                                 <input type="hidden" name="model" value="{{ $model->id }}">
                                 <input type="hidden" name="dataset" value="{{ $model->dataset ? $model->dataset->id : '' }}">
-                                <button type="submit">Start learning</button>
+                                <button class="btn btn-accent " type="submit">Start</button>
                             </form>
                         </div>
                     </div>
