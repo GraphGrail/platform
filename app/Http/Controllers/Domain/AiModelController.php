@@ -143,12 +143,18 @@ class AiModelController extends Controller
         }
 
         $config = $model->configuration;
+        $relations = $config->componentRelations;
         foreach ($strategy->getComponents() as $component) {
             $class = \get_class($component);
             $link = new Configuration\ComponentRelation([
                 'component_class' => $class,
-                'component_attributes' => $data[$class],
             ]);
+            foreach ($relations as $relation) {
+                if ($relation->component_class === $class) {
+                    $link = $relation;
+                }
+            }
+            $link->component_attributes = $data[$class];
             $config->componentRelations()->save($link);
         }
 

@@ -108,9 +108,29 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
     <script>
         $(document).ready(function () {
             $('div.component-field-repeatable .add-repeatable').on('click', function () {
-                var fields = $(this).parents('.component-field-repeatable');
-                fields.parent().append(fields.clone(true));
-                $(this).remove();
+                let fields = $(this).parents('.component-field-repeatable');
+                let clone = fields.clone(true);
+                clone.find('.remove-repeatable').removeClass('m--hide');
+
+                fields.parent().append(clone);
+                $(this).addClass('m--hide');
+                fields.find('.remove-repeatable').removeClass('m--hide');
+            });
+            $('div.component-field-repeatable .remove-repeatable').on('click', function () {
+                let fields = $(this).parents('.component-field-repeatable');
+                let parent = fields.parent();
+                fields.remove();
+
+                let last = parent.find('.component-field-repeatable').last();
+
+                parent.find('.add-repeatable').addClass('m--hide');
+                last.find('.add-repeatable').removeClass('m--hide');
+
+                fields = parent.find('.component-field-repeatable');
+                fields.find('.remove-repeatable').removeClass('m--hide');
+                if (fields.length === 1) {
+                    parent.find('.remove-repeatable').addClass('m--hide')
+                }
             });
         });
     </script>

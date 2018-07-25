@@ -34,7 +34,7 @@ class Embedder extends ComponentForm
 
     protected function getType()
     {
-        return \Form::select($this->createName('emb_type'), $this->valueLabels, 'pretrained_compressed', ['class' => $this->class]);
+        return \Form::select($this->createName('emb_type'), $this->valueLabels, $this->component->emb_type ?? 'pretrained_compressed', ['class' => $this->class]);
     }
 
 }

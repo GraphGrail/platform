@@ -29,9 +29,10 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     abstract public function description(): string;
     abstract public function validate($data): bool;
 
-    public function __construct(Strategy $strategy)
+    public function __construct(Strategy $strategy, $attributes = [])
     {
         $this->strategy = $strategy;
+        $this->setRawAttributes($attributes);
     }
 
     /**

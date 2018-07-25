@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer user_id
  * @property string strategy_class
  * @property AiModel[] models
+ * @property ComponentRelation[] componentRelations
  */
 class Configuration extends Model
 {
@@ -50,11 +51,11 @@ class Configuration extends Model
                 \Log::warning("Component class doesn't exist: {$model->component_class}");
                 continue;
             }
-            if (!is_subclass_of(Component::class, $model->component_class)) {
+            if (!is_subclass_of($model->component_class, Component::class)) {
                 \Log::warning("Wrong Component class: {$model->component_class}");
                 continue;
             }
-            $this->_components[$model->component_class] = new $model->component_class($model->component_attributes);
+            $this->_components[$model->component_class] = new $model->component_class($this->strategy(), $model->component_attributes);
         }
 
         return $this->_components ?? [];

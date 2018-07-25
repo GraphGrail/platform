@@ -29,10 +29,10 @@ class NetClassifier extends ComponentForm
 //        'save_path' => 'Путь для сохранения весовых коэффициентов ИНС',
 //        'load_path' => 'Путь для загрузки весовых коэффициентов ИНС',
 
-        'layers[type]' => 'Тип архитектуры для слоя',
-        'layers[activation]' => 'Функиция активации',
-        'layers[units]' => 'Кол-во нейронов',
-        'layers[kernel_size]' => 'Размер ядра',
+        'layers_type' => 'Тип архитектуры для слоя',
+        'layers_activation' => 'Функиция активации',
+        'layers_units' => 'Кол-во нейронов',
+        'layers_kernel_size' => 'Размер ядра',
     ];
 
     protected $valueLabels = [
@@ -99,99 +99,123 @@ class NetClassifier extends ComponentForm
 
     protected function get_layers()
     {
-        $result = ['<div class="component-field-layers component-field-repeatable alert m-alert m-alert--default">'];
-
-        $fields = [];
-
-        $fields[] = [
-            $this->createLabel('layers[type]'),
-            \Form::select($this->createName('layers[arch]') . '[]', $this->variants['layers'], 'bilstm_layers', ['class' => $this->class]),
-        ];
-
-        $fields[] = [
-            $this->createLabel('layers[units]'),
-            \Form::number($this->createName('layers[units]') . '[]', 1024, ['class' => $this->class]),
-        ];
-
-        $fields[] = [
-            $this->createLabel('layers[kernel_size]'),
-            \Form::number($this->createName('layers[kernel_size]') . '[]', 2, ['class' => $this->class]),
-        ];
-
-        $fields[] = [
-            $this->createLabel('layers[activation]'),
-            \Form::select($this->createName('layers[activation]') . '[]', $this->variants['activation'], 'relu', ['class' => $this->class]),
-        ];
-        $result[] = implode('', array_map(function ($data) {return implode('', $data);}, $fields));
-        $result[] = '<div class="m-form__actions">' . \Form::button('+' . __('Add'), ['class' => 'btn m-btn--pill m-btn--air btn-info add-repeatable']) . '</div>';
-
-        $result[] = '</div>';
+        $result = [];
+        foreach ($this->component->layers_arch as $index => $layers_arch) {
+            $data = [
+                'layers_arch' => $this->component->layers_arch[$index],
+                'layers_units' => $this->component->layers_units[$index],
+                'layers_kernel_size' => $this->component->layers_kernel_size[$index],
+                'layers_activation' => $this->component->layers_activation[$index],
+            ];
+            $result[] = implode('', $this->createLayer($data, $index === (\count($this->component->layers_arch) - 1)));
+        }
 
         return new HtmlString(implode('', $result));
     }
 
     protected function get_architecture()
     {
-        return \Form::select($this->createName('architecture'), $this->variants['architecture'], 'dcnn', ['class' => $this->class]);
+        return \Form::select($this->createName('architecture'), $this->variants['architecture'], $this->component->architecture ?? 'dcnn', ['class' => $this->class]);
     }
 
     protected function get_loss()
     {
-        return \Form::select($this->createName('loss'), $this->variants['loss'], 'categorical_crossentropy', ['class' => $this->class]);
+        return \Form::select($this->createName('loss'), $this->variants['loss'], $this->component->loss ?? 'categorical_crossentropy', ['class' => $this->class]);
     }
 
     protected function get_metrics()
     {
-        return \Form::select($this->createName('metrics'), $this->variants['metrics'], 'categorical_accuracy', ['class' => $this->class]);
+        return \Form::select($this->createName('metrics'), $this->variants['metrics'], $this->component->metrics ?? 'categorical_accuracy', ['class' => $this->class]);
     }
 
     protected function get_optimizer()
     {
-        return \Form::select($this->createName('optimizer'), $this->variants['optimizer'], 'adam', ['class' => $this->class]);
+        return \Form::select($this->createName('optimizer'), $this->variants['optimizer'], $this->component->optimizer ?? 'adam', ['class' => $this->class]);
     }
 
     protected function get_emb_dim()
     {
-        return \Form::number($this->createName('emb_dim'), 25, ['class' => $this->class]);
+        return \Form::number($this->createName('emb_dim'), $this->component->emb_dim ?? 25, ['class' => $this->class]);
     }
 
     protected function get_seq_len()
     {
-        return \Form::number($this->createName('seq_len'), 50, ['class' => $this->class]);
+        return \Form::number($this->createName('seq_len'), $this->component->seq_len ?? 50, ['class' => $this->class]);
     }
 
     protected function get_pool_size()
     {
-        return \Form::number($this->createName('pool_size'), 4, ['class' => $this->class]);
+        return \Form::number($this->createName('pool_size'), $this->component->pool_size ?? 4, ['class' => $this->class]);
     }
 
     protected function get_dropout_power()
     {
-        return \Form::number($this->createName('dropout_power'), 0.5, ['class' => $this->class]);
+        return \Form::number($this->createName('dropout_power'), $this->component->dropout_power ?? 0.5, ['class' => $this->class]);
     }
 
     protected function get_l2_power()
     {
-        return \Form::number($this->createName('l2_power'), 1e-4, ['class' => $this->class]);
+        return \Form::number($this->createName('l2_power'), $this->component->l2_power ?? 1e-4, ['class' => $this->class]);
     }
 
     protected function get_n_classes()
     {
-        return \Form::number($this->createName('n_classes'), 5, ['class' => $this->class]);
+        return \Form::number($this->createName('n_classes'), $this->component->n_classes ?? 5, ['class' => $this->class]);
     }
 
     protected function get_classes()
     {
-        return \Form::text($this->createName('classes'), ['class' => $this->class]);
+        return \Form::text($this->createName('classes'), $this->component->classes ?? '', ['class' => $this->class]);
     }
 
     protected function get_save_path()
     {
-        return \Form::text($this->createName('save_path'), ['class' => $this->class]);
+        return \Form::text($this->createName('save_path'), $this->component->save_path ?? '', ['class' => $this->class]);
     }
 
     protected function get_load_path()
     {
-        return \Form::text($this->createName('load_path'), ['class' => $this->class]);
+        return \Form::text($this->createName('load_path'), $this->component->load_path ?? '', ['class' => $this->class]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function createLayer($data, $addBtn = true): array
+    {
+        $result = ['<div class="component-field-layers component-field-repeatable alert m-alert m-alert--default">'];
+
+        $fields = [];
+
+        $fields[] = [
+            $this->createLabel('layers_type'),
+            \Form::select($this->createName('layers_arch') . '[]', $this->variants['layers'], $data['layers_arch'] ?? 'bilstm_layers', ['class' => $this->class]),
+        ];
+
+        $fields[] = [
+            $this->createLabel('layers_units'),
+            \Form::number($this->createName('layers_units') . '[]', $data['layers_units'] ?? 1024, ['class' => $this->class]),
+        ];
+
+        $fields[] = [
+            $this->createLabel('layers_kernel_size'),
+            \Form::number($this->createName('layers_kernel_size') . '[]', $data['layers_kernel_size'] ?? 2, ['class' => $this->class]),
+        ];
+
+        $fields[] = [
+            $this->createLabel('layers_activation'),
+            \Form::select($this->createName('layers_activation') . '[]', $this->variants['activation'], $data['layers_activation'] ?? 'relu', ['class' => $this->class]),
+        ];
+        $result[] = implode('', array_map(function ($data) {
+            return implode('', $data);
+        }, $fields));
+
+        $result[] = '<div class="m-demo" style="margin-bottom: 0px"><div class="m-demo__preview  m-demo__preview--btn" style="background-color: #f7f8fa; padding-bottom: 0px">';
+        $result[] = \Form::button('+ ' . __('Add'), ['class' => 'btn m-btn--pill m-btn--air btn-info add-repeatable ' . ($addBtn ? '': 'm--hide')]);
+        $result[] = \Form::button('– ' . __('Remove'), ['class' => 'btn m-btn--pill m-btn--air remove-repeatable']);
+        $result[] = '</div></div>';
+
+        $result[] = '</div>';
+        return $result;
     }
 }
