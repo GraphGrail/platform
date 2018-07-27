@@ -100,14 +100,16 @@ class NetClassifier extends ComponentForm
     protected function get_layers()
     {
         $result = [];
-        foreach ((array)$this->component->layers_arch as $index => $layers_arch) {
+
+        $layers = $this->component->layers_arch ?? [false];
+        foreach ((array)$layers as $index => $layers_arch) {
             $data = [
                 'layers_arch' => $this->component->layers_arch[$index],
                 'layers_units' => $this->component->layers_units[$index],
                 'layers_kernel_size' => $this->component->layers_kernel_size[$index],
                 'layers_activation' => $this->component->layers_activation[$index],
             ];
-            $result[] = implode('', $this->createLayer($data, $index === (\count($this->component->layers_arch) - 1)));
+            $result[] = implode('', $this->createLayer($data, $index === (\count($layers) - 1)));
         }
 
         return new HtmlString(implode('', $result));
