@@ -7,12 +7,16 @@ namespace App\Domain\Strategy\iPavlov;
 
 
 use App\Domain\AiModel;
+use App\Domain\Component;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\Storage;
+use App\Domain\Strategy\iPavlov\Component\StopWordsRemover;
+use App\Domain\Strategy\iPavlov\Component\TextNormalizer;
 use App\Domain\Strategy\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Validation\ValidationException;
 use \RuntimeException;
 
 class Strategy extends \App\Domain\Strategy\Strategy
@@ -116,6 +120,70 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return 'iPavlov';
     }
 
+    /**
+     * @param Component[] $components
+     * @param array $data
+     * @return mixed|void
+     * @throws ValidationException
+     */
+    public function validate(array $components, array $data = [])
+    {
+        if ($data) {
+            foreach ($components as $component) {
+                $component->validate($data[\get_class($component)]);
+            }
+        }
+
+        $this->validatePositions($components);
+    }
+
+    /**
+     * @param Component[] $components
+     * @return bool
+     * @throws ValidationException
+     */
+    private function validatePositions(array $components): bool
+    {
+        $textNormalizerPos = $stopWordsPos = null;
+
+        /** @var Component[] $components */
+        $components = array_values($components);
+        foreach ($components as $pos => $component) {
+            if ($component::name() === TextNormalizer::name()) {
+                $textNormalizerPos = $pos;
+            }
+            if ($component::name() === StopWordsRemover::name()) {
+                $stopWordsPos = $pos;
+            }
+        }
+        if (null === $textNormalizerPos) {
+            return true;
+        }
+        if (null === $stopWordsPos) {
+            return true;
+        }
+
+        $position = $textNormalizerPos - $stopWordsPos;
+
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['position' => abs($position)], [
+            'position' => 'required|numeric|max:1',
+            ],
+            ['position.max' => __('"Text normalizer" and "Stop words" components may be only near each other')]
+        );
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return $validator->passes();
+    }
+
+
+    /**
+     * @param Configuration $configuration
+     * @return array
+     * @throws \App\Domain\Exception\ConfigurationException
+     */
     protected function createJsonConfiguration(Configuration $configuration): array
     {
         $pipe = [];

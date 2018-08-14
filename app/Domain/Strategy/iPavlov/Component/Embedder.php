@@ -25,6 +25,11 @@ class Embedder extends Component
         ],
     ];
 
+    public static function name(): string
+    {
+        return 'embedder';
+    }
+
     public function description(): string
     {
         return 'Преобразователь текста в признаковое пространство, т.е. в вид, приемлемый для обработки AI алгоритмом';
@@ -55,7 +60,7 @@ class Embedder extends Component
     public function jsonSerialize()
     {
         return array_merge([
-            'name' => 'embedder',
+            'name' => self::name(),
             'in' => ['xn'],
             'out' => ['xv'],
             'load_path' => [

@@ -35,6 +35,7 @@ class Configuration extends Model
     /**
      * @param bool $refresh
      * @return Component[]
+     * @throws ConfigurationException
      */
     public function components($refresh = false): array
     {

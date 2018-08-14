@@ -10,7 +10,7 @@ $method = $model->id ? 'PUT' : 'POST';
 
 $route = $model->id ? route('ai-models.update', ['model' => $model]) : route('ai-models.store');
 
-/** @var \App\Domain\Strategy\StrategyProvider $provider */
+/** @var \App\Domain\Strategy\Strategy $strategy */
 /** @var \App\Domain\Dataset\Dataset[] $datasets */
 
 $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Dataset $d) {
@@ -44,63 +44,61 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
             @endif
         </div>
 
-        @foreach($provider->all() as $strategy)
-            <div class="m-portlet m-portlet--tab">
-                <div class="m-portlet__head">
-                    <div class="m-portlet__head-caption">
-                        <div class="m-portlet__head-title">
+        <div class="m-portlet m-portlet--tab">
+            <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                    <div class="m-portlet__head-title">
 						<span class="m-portlet__head-icon m--hide">
 						<i class="la la-gear"></i>
 						</span>
-                            <h3 class="m-portlet__head-text">
-                                Create model "{{ $strategy->name() }}"
-                            </h3>
-                        </div>
+                        <h3 class="m-portlet__head-text">
+                            Create model "{{ $strategy->name() }}"
+                        </h3>
                     </div>
                 </div>
-                <!--begin::Form-->
-                <form class="col-md-8 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
-                    @method($method)
-                    @csrf
-                    <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
-                    <div class="m-portlet__body">
-                        <div class="form-group m-form__group">
-                            {{ \Form::label('dataset', 'Dataset') }}
-                            {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
-                        </div>
-                        @foreach($strategy->getComponents($model->configuration) as $component)
-                            <div class="m-portlet__head">
-                                <div class="m-portlet__head-caption">
-                                    <div class="m-portlet__head-title">
-                                        <span class="m-portlet__head-icon m--hide">
+            </div>
+            <!--begin::Form-->
+            <form class="col-md-8 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
+                @method($method)
+                @csrf
+                <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
+                <div class="m-portlet__body">
+                    <div class="form-group m-form__group">
+                        {{ \Form::label('dataset', 'Dataset') }}
+                        {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
+                    </div>
+                    @foreach($strategy->getComponents($model->configuration) as $component)
+                        <div class="m-portlet__head">
+                            <div class="m-portlet__head-caption">
+                                <div class="m-portlet__head-title">
+                                    <span class="m-portlet__head-icon m--hide">
                                         <i class="la la-gear"></i>
-                                        </span>
-                                        <h4 class="m-portlet__head-text">
-                                            {{ $component->description() }}
-                                        </h4>
-                                    </div>
+                                    </span>
+                                    <h4 class="m-portlet__head-text">
+                                        {{ $component->description() }}
+                                    </h4>
                                 </div>
                             </div>
-
-                            @foreach($component->getFields() as $field)
-                                <div class="form-group m-form__group">
-                                    {{ $field->getLabel() }}
-                                    {{ $field->getInput() }}
-                                </div>
-                                <br>
-                            @endforeach
-                        @endforeach
-                    </div>
-
-                    <div class="m-portlet__foot m-portlet__foot--fit">
-                        <div class="m-form__actions">
-                            <button type="submit" class="btn btn-accent">{{ __('Save') }}</button>
                         </div>
+
+                        @foreach($component->getFields() as $field)
+                            <div class="form-group m-form__group">
+                                {{ $field->getLabel() }}
+                                {{ $field->getInput() }}
+                            </div>
+                            <br>
+                        @endforeach
+                    @endforeach
+                </div>
+
+                <div class="m-portlet__foot m-portlet__foot--fit">
+                    <div class="m-form__actions">
+                        <button type="submit" class="btn btn-accent">{{ __('Save') }}</button>
                     </div>
-                </form>
-                <!--end::Form-->
-            </div>
-        @endforeach
+                </div>
+            </form>
+            <!--end::Form-->
+        </div>
     </div>
 @endsection
 

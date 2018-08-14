@@ -8,25 +8,28 @@ namespace App\Domain\Strategy\iPavlov\Component;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Validator;
 
-class TextNormalizer extends Component
+class StopWordsRemover extends Component
 {
-    protected $attributes = ['norm_method', 'tokenizer'];
+    protected $attributes = ['language', 'stopset'];
 
     protected $values = [
-        'norm_method' => ['lemmatize', 'stem', 'none'],
-        'tokenizer' => ['treebank', 'word_tokenize'],
+        'language' => ['none', 'en', 'rus'],
+    ];
+
+    protected $siblings = [
+        TextNormalizer::class,
     ];
 
     public static function name(): string
     {
-        return 'text_normalizer';
+        return 'stop_words_remover';
     }
+
 
     public function description(): string
     {
-        return 'Нормализатор текста. Удаляет неинформативный текст (ссылки, e-mail адреса, числа). Приводит слова к нормальной форме.';
+        return 'Модуль стоп слов';
     }
 
     /**
@@ -38,8 +41,7 @@ class TextNormalizer extends Component
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = \Validator::make($data, [
-            'norm_method' => ['required', Rule::in($this->values['norm_method'])],
-            'tokenizer' => ['required', Rule::in($this->values['tokenizer'])],
+            'language' => [Rule::in($this->values['language'])],
         ]);
         if ($validator->fails()) {
             throw new ValidationException($validator);
@@ -49,7 +51,7 @@ class TextNormalizer extends Component
 
     public function getFields(): array
     {
-        return (new \App\Domain\Strategy\iPavlov\Component\Form\TextNormalizer($this))->getFieldsFormObjects();
+        return (new \App\Domain\Strategy\iPavlov\Component\Form\StopWordsRemover($this))->getFieldsFormObjects();
     }
 
     public function jsonSerialize()
@@ -58,7 +60,7 @@ class TextNormalizer extends Component
             'name' => self::name(),
             'id' => self::name(),
             'in' => ['x'],
-            'out' => ['xn'],
+            'out' => ['xnr'],
         ], $this->createParams());
     }
 }

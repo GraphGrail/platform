@@ -64,6 +64,11 @@ class NetClassifier extends Component
         ],
     ];
 
+    public static function name(): string
+    {
+        return 'cnn_model';
+    }
+
     public function description(): string
     {
         return 'Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности.';
@@ -109,7 +114,7 @@ class NetClassifier extends Component
     public function jsonSerialize()
     {
         return array_merge([
-            'name' => 'cnn_model',
+            'name' => self::name(),
             'in' => ['xv'],
             'in_y' => ['y'],
             'out' => ['y_pred'],

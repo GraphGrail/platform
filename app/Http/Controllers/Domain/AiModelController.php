@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Domain;
 
 use App\Domain\AiModel;
+use App\Domain\Component;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
+use App\Domain\Strategy\Strategy;
 use App\Domain\Strategy\StrategyProvider;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -31,14 +33,25 @@ class AiModelController extends Controller
      * Show the form for creating a new resource.
      *
      * @param StrategyProvider $provider
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function create(StrategyProvider $provider)
+    public function create(StrategyProvider $provider, Request $request)
     {
-        return view('domain/ai_models/form', [
-                'model' => new AiModel(['user_id' => Auth::id()]),
+        if ($strategy = $request->get('strategy')) {
+            /** @var Strategy $strategy */
+            $strategy = $provider->get($strategy);
+
+            return view('domain/ai_models/form', [
+                    'model' => new AiModel(['user_id' => Auth::id()]),
+                    'strategy' => $strategy,
+                    'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
+                ]
+            );
+        }
+
+        return view('domain/ai_models/strategies', [
                 'provider' => $provider,
-                'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
             ]
         );
     }
@@ -62,9 +75,19 @@ class AiModelController extends Controller
 
         $data = $request->get(\get_class($strategy));
 
-        foreach ($strategy->getComponents() as $component) {
-            $component->validate($data[\get_class($component)]);
-        }
+        $selected = array_keys($data);
+
+        /** @var Component[] $components */
+        $components =
+            collect($strategy->getComponents())
+            ->filter(function (Component $component) use ($selected) {
+                return \in_array(\get_class($component), $selected, true);
+            })
+            ->sortBy(function (Component $component) use ($selected) {
+            return array_search($component::name(), $selected, true);
+        })->all();
+
+        $strategy->validate($components, $data);
 
         $config = new Configuration([
             'user_id' => Auth::id(),
@@ -73,7 +96,7 @@ class AiModelController extends Controller
         if (!$config->save()) {
             throw new RuntimeException('Configuration not saved');
         }
-        foreach ($strategy->getComponents() as $component) {
+        foreach ($components as $component) {
             $class = \get_class($component);
             $link = new Configuration\ComponentRelation([
                 'component_class' => $class,
@@ -108,14 +131,15 @@ class AiModelController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Domain\AiModel  $model
+     * @param  \App\Domain\AiModel $model
      * @return \Illuminate\Http\Response
+     * @throws \App\Domain\Exception\ConfigurationException
      */
-    public function edit(AiModel $model, StrategyProvider $provider)
+    public function edit(AiModel $model)
     {
         return view('domain/ai_models/form', [
                 'model' => $model,
-                'provider' => $provider,
+                'strategy' => $model->configuration->strategy(),
                 'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
             ]
         );

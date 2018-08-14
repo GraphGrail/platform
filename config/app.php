@@ -162,6 +162,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\StrategyServiceProvider::class,
+        App\Providers\FormServiceProvider::class,
 
     ],
 

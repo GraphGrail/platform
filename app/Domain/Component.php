@@ -15,6 +15,13 @@ use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use JsonSerializable;
 
+/**
+ * Class Component
+ * @package App\Domain
+ *
+ * @property bool enabled
+ * @property int position
+ */
 abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     use HasAttributes;
@@ -26,6 +33,7 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     /** @var Strategy */
     protected $strategy;
 
+    abstract public static function name(): string;
     abstract public function description(): string;
     abstract public function validate($data): bool;
 

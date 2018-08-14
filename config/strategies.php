@@ -9,6 +9,7 @@ return [
         'class' => \App\Domain\Strategy\iPavlov\Strategy::class,
         'components' => [
             \App\Domain\Strategy\iPavlov\Component\TextNormalizer::class,
+            \App\Domain\Strategy\iPavlov\Component\StopWordsRemover::class,
             \App\Domain\Strategy\iPavlov\Component\Embedder::class,
             \App\Domain\Strategy\iPavlov\Component\NetClassifier::class,
         ],

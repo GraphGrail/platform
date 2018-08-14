@@ -35,6 +35,13 @@ abstract class Strategy
 
     abstract public function status(AiModel $model): Strategy;
 
+    /**
+     * @param Component[] $components
+     * @param array $data
+     * @return mixed
+     */
+    abstract public function validate(array $components, array $data = []);
+
     public function getForm(string $selected = null)
     {
         $name = \get_class($this);
