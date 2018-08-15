@@ -3,6 +3,34 @@
  * @author Juriy Panasevich <u.panasevich@graphgrail.com>
  */
 /** @var \App\Domain\AiModel $model */
+
+$train = url('ai-models/train', ['model' => $model]);
+$edit = route('ai-models.edit', ['model' => $model]);
+$url = null;
+
+$message = '';
+$method = 'POST';
+if ($model->status === \App\Domain\AiModel::STATUS_VERIFYING_CONFIG) {
+    $message = __('Configuration testing');
+}
+
+if ($model->status === \App\Domain\AiModel::STATUS_VERIFY_CONFIG_FAIL) {
+    $url = $edit;
+    $method = 'GET';
+    $message = __('Configuration test failed. Change configuration');
+}
+
+if ($model->status === \App\Domain\AiModel::STATUS_VERIFY_CONFIG_OK) {
+    $url = $train;
+    $message = __('Configuration test passed. Now you may train your model');
+
+    if (!$model->dataset) {
+        $method = 'GET';
+        $url = $edit;
+        $message = __('Configuration test passed. But you need to select dataset');
+    }
+}
+
 ?>
 @extends('layouts.app')
 @section('content')
@@ -17,9 +45,9 @@
             @if ($model->dataset)
                 <a href="{{ route('datasets.download', ['dataset' => $model->dataset]) }}"
                    class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ route('ai-models.edit', ['model' => $model]) }}">Edit</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Edit</a>
             @else
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ route('ai-models.edit', ['model' => $model]) }}">Empty dataset</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Empty dataset</a>
             @endif
         </div>
     </div>
@@ -32,7 +60,7 @@
                 </div>
             @endif
         </div>
-        @if($model->status === \App\Domain\AiModel::STATUS_NEW)
+        @if($model->status !== \App\Domain\AiModel::STATUS_READY)
             <div class="m-portlet" id="m_blockui_2_portlet">
                 <div class="m-portlet__head">
                     <div class="m-portlet__head-caption">
@@ -50,12 +78,16 @@
 
                     </span>
                         <div class="m-section__content">
-                            <form method="POST" action="{{ url('ai-models/train', ['model' => $model]) }}">
-                                @csrf
-                                <input type="hidden" name="model" value="{{ $model->id }}">
-                                <input type="hidden" name="dataset" value="{{ $model->dataset ? $model->dataset->id : '' }}">
-                                <button class="btn btn-accent " type="submit">Start</button>
-                            </form>
+                            <p>{{ $message }}</p>
+                            @if($url)
+                                <form method="POST" action="{{ $url }}">
+                                    @method($method)
+                                    @csrf
+                                    <input type="hidden" name="model" value="{{ $model->id }}">
+                                    <input type="hidden" name="dataset" value="{{ $model->dataset ? $model->dataset->id : '' }}">
+                                    <button class="btn btn-accent " type="submit">Start</button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                     <!--end::Section-->

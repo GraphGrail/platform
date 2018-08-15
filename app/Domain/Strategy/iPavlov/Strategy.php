@@ -52,6 +52,36 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $this->client = new Client($guzzle);
     }
 
+    /**
+     * @param AiModel $model
+     * @return \App\Domain\Strategy\Strategy
+     * @throws \App\Domain\Exception\ConfigurationException
+     */
+    public function verification(AiModel $model): \App\Domain\Strategy\Strategy
+    {
+        $config = $this->createJsonConfiguration($model->configuration);
+        $requestData = [
+            'model' => $model->id,
+            'config' => $config,
+        ];
+
+        $response = $this->client->post('/checkConfig', [
+            RequestOptions::JSON => $requestData,
+        ]);
+        $contents = $response->getBody()->getContents();
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException($contents);
+        }
+        $model->status = AiModel::STATUS_VERIFY_CONFIG_FAIL;
+
+        if (false !== strpos($contents, 'ok')) {
+            $model->status = AiModel::STATUS_VERIFY_CONFIG_OK;
+        }
+        $model->save();
+
+        return $this;
+    }
+
     public function train(AiModel $model, Dataset $dataset): \App\Domain\Strategy\Strategy
     {
         $config = $this->createJsonConfiguration($model->configuration);
@@ -93,7 +123,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
     public function exec(AiModel $model, $data = null): Result
     {
-        if ($model->status === AiModel::STATUS_NEW) {
+        if ($model->status === AiModel::STATUS_VERIFY_CONFIG_OK) {
             return $this->startTrain($model);
         }
         if ($model->status === AiModel::STATUS_TRAINED) {

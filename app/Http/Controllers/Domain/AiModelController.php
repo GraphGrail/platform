@@ -62,7 +62,7 @@ class AiModelController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param StrategyProvider $provider
      * @return \Illuminate\Http\RedirectResponse
-     * @throws ValidationException
+     * @throws \App\Domain\Exception\ConfigurationException
      */
     public function store(Request $request, StrategyProvider $provider)
     {
@@ -114,6 +114,12 @@ class AiModelController extends Controller
         if (!$model->save()) {
             throw new RuntimeException('Configuration not saved');
         }
+
+        if (!$strategy = $config->strategy()) {
+            throw new RuntimeException('Strategy not set');
+        }
+        $strategy->verification($model);
+
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 
@@ -148,9 +154,10 @@ class AiModelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Domain\AiModel  $model
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Domain\AiModel $model
+     * @param StrategyProvider $provider
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, AiModel $model, StrategyProvider $provider)
     {
@@ -188,6 +195,8 @@ class AiModelController extends Controller
         if (!$model->save()) {
             throw new RuntimeException('Configuration not saved');
         }
+        $strategy->verification($model);
+
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 

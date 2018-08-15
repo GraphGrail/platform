@@ -33,6 +33,7 @@ abstract class Strategy
     abstract public function name(): string;
     abstract public function exec(AiModel $model, $data = null): Result;
 
+    abstract public function verification(AiModel $model): Strategy;
     abstract public function status(AiModel $model): Strategy;
 
     /**
