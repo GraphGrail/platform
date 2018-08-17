@@ -11,6 +11,7 @@ use App\Domain\Component;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\Storage;
+use App\Domain\Exception\ExecutionException;
 use App\Domain\Exception\VerificationException;
 use App\Domain\Strategy\iPavlov\Component\StopWordsRemover;
 use App\Domain\Strategy\iPavlov\Component\TextNormalizer;
@@ -113,25 +114,56 @@ class Strategy extends \App\Domain\Strategy\Strategy
      * @param AiModel $model
      * @param Dataset $dataset
      * @return \App\Domain\Strategy\Strategy
+     * @throws ValidationException
      * @throws \App\Domain\Exception\ConfigurationException
      */
     public function train(AiModel $model, Dataset $dataset): \App\Domain\Strategy\Strategy
     {
-        $config = $this->createJsonConfiguration($model->configuration);
-        $requestData = [
-            'dataset' => (new Storage())->getPath($dataset),
-            'config' => $config,
-        ];
+        $errors = [];
+        try {
+            $config = $this->createJsonConfiguration($model->configuration);
+            $requestData = [
+                'dataset' => (new Storage())->getPath($dataset),
+                'config' => $config,
+            ];
 
-        $response = $this->client->post('/train/' . $model->id, [
-            RequestOptions::JSON => $requestData,
-        ]);
-        if ($response->getStatusCode() !== 200) {
-            throw new RuntimeException($response->getBody()->getContents());
+            $response = $this->client->post('/train/' . $model->id, [
+                RequestOptions::JSON => $requestData,
+            ]);
+            if ($response->getStatusCode() !== 200) {
+                throw new ExecutionException($response->getBody()->getContents());
+            }
+
+            $contents = $response->getBody()->getContents();
+            if (!$contents = json_decode($contents, true)) {
+                \Log::error($response->getBody()->getContents());
+                throw new ExecutionException('Invalid response');
+            }
+            if (!array_key_exists('status', $contents)) {
+                \Log::error($response->getBody()->getContents());
+                throw new ExecutionException('Invalid response');
+            }
+            if (false === strpos($contents['status'], 'ok')) {
+                throw new ExecutionException($contents['errors']);
+            }
+
+            $model->status = AiModel::STATUS_TRAINING;
+        } catch (ExecutionException $e) {
+            $model->status = AiModel::STATUS_TEST_FAIL;
+
+            \Log::error($e->getMessage());
+            $errors = $e->getErrors();
         }
-
-        $model->status = AiModel::STATUS_TRAINING;
         $model->save();
+
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['errors' => $errors], [
+            'errors' => 'size:0',
+        ], ['errors.size' => __('Failed to start train model: ' . implode(', ', $errors))]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
 
         return $this;
     }

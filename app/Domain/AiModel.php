@@ -58,7 +58,7 @@ class AiModel extends Model
             self::STATUS_TRAINED => 'Trained',
             self::STATUS_TESTING => 'Testing',
             self::STATUS_READY => 'Ready',
-            self::STATUS_TEST_FAIL => 'Fail',
+            self::STATUS_TEST_FAIL => 'Failed',
         ];
     }
 }

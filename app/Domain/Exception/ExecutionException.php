@@ -6,10 +6,10 @@
 namespace App\Domain\Exception;
 
 
-class VerificationException extends Exception
+class ExecutionException extends Exception
 {
     public function __construct($errors = [])
     {
-        parent::__construct(__('Configuration invalid'), $errors);
+        parent::__construct(__('Strategy execution error'), $errors);
     }
 }
