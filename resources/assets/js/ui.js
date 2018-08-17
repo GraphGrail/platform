@@ -36,7 +36,7 @@ $(document).ready(function () {
             another.addClass('prepare-drop');
         },
         stop: function (a, ui) {
-            $('.prepare-drop').removeClass('prepare-drop');
+            $('.right-sortable.prepare-drop').removeClass('prepare-drop');
         },
         receive: function( event, ui ) {
             let head = ui.item.children('.m-portlet__head').next();

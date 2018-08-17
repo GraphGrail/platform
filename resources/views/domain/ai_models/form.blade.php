@@ -90,13 +90,37 @@ if ($model->configuration) {
 
             <div class="m-portlet__body m-portlet__body--modified">
                 <div class="m-portlet__body-left">
-                    <div class="ui-sortable left-sortable">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon m--hide">
+                                    <i class="la la-gear"></i>
+                                </span>
+                                <h5 class="m-portlet__head-text">
+                                    {{ __('Component Palette') }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-sortable left-sortable prepare-drop">
                         @foreach($available as $component)
                             @include('domain.ai_models.component', ['component' => $component])
                         @endforeach
                     </div>
                 </div>
                 <div class="m-portlet__body-right">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon m--hide">
+                                    <i class="la la-gear"></i>
+                                </span>
+                                <h5 class="m-portlet__head-text">
+                                    {{ __('Customize Solution') }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
                     <!--begin::Form-->
                     <form class="col-md-12 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
                         @method($method)
