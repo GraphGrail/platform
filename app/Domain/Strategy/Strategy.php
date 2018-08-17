@@ -8,25 +8,18 @@ namespace App\Domain\Strategy;
 
 use App\Domain\AiModel;
 use App\Domain\Component;
-use App\Domain\Configuration;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\ValidationException;
 
 abstract class Strategy
 {
     protected $components = [];
 
     /**
-     * @param Configuration|null $hydrator
      * @return Component[]
      */
-    public function getComponents(Configuration $hydrator = null): array
+    public function getComponents(): array
     {
-        if (!$hydrator) {
-            return $this->components;
-        }
-        foreach ($this->components as $component) {
-            $hydrator->fillComponent($component);
-        }
         return $this->components;
     }
 
@@ -39,6 +32,7 @@ abstract class Strategy
     /**
      * @param Component[] $components
      * @param array $data
+     * @throws ValidationException
      * @return mixed
      */
     abstract public function validate(array $components, array $data = []);

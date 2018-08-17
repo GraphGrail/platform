@@ -12,7 +12,7 @@ use Validator;
 
 class TextNormalizer extends Component
 {
-    protected $attributes = ['norm_method', 'tokenizer'];
+    protected $attributes = ['norm_method', 'tokenizer', 'optional'];
 
     protected $values = [
         'norm_method' => ['lemmatize', 'stem', 'none'],

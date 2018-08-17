@@ -27,7 +27,7 @@ abstract class ComponentForm
 
     protected function getComponentPrefix(): string
     {
-        return \get_class($this->component);
+        return $this->component::name();
     }
 
     public function getPrefix()

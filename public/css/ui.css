@@ -1,0 +1,140 @@
+div.m-portlet__body {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.ui-sortable {
+    padding: 0px 10px;
+    background: white;
+    border-radius: 15px;
+    min-height: 70px;
+    width: calc(100% - 60px);
+    margin: 0 auto;
+    transition: 0.1s;
+}
+
+.left-sortable {
+    border: none;
+}
+
+.sortable-item-head .m-portlet__head-caption{
+    border-bottom: none;
+}
+
+.sortable-item:not(.sortable-item--disabled) {
+    box-shadow: 0px 7px 13px -4px rgba(100,100,100,0.3);
+}
+
+.sortable-item .m-portlet__head {
+    cursor: move;
+    position: relative;
+    height: initial;
+    padding: 10px 55px 0 2.2rem;
+}
+
+.m-portlet .m-portlet__body--modified {
+    padding-top: 10px;
+}
+
+.sortable-item-head-arrow {
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    top: calc(50% - 8px);
+    right: 20px;
+    transition: transform 0.1s;
+    transform: rotate(90deg);
+    opacity: 0.6;
+    background: url(/images/right-arrow.svg) 50% 50% no-repeat;
+}
+
+.m-form .m-form__actions--modified {
+    padding: 0;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.m-portlet .m-portlet__foot.m-portlet__foot--fit {
+    margin-top: 50px;
+}
+
+.m-portlet__head.toggled .sortable-item-head-arrow{
+    transform: rotate(270deg);
+}
+
+.left-sortable {
+    margin-top: 106px;
+}
+
+.ui-sortable-drop-area {
+    margin: 15px 0;
+    background: #dfe2ff !important;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 5px;
+    color: #0f0f11;
+}
+
+div.m-portlet__body-left, div.m-portlet__body-right {
+    width: 48%;
+}
+
+.m-portlet .m-portlet__head .m-portlet__head-caption {
+    padding-bottom: 10px;
+}
+
+.prepare-drop {
+    border: 4px dashed #bbb;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    position: relative;
+}
+
+.prepare-drop:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    font-size: 20px;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%)
+}
+
+.sortable-item {
+    margin: 15px 0;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #5867dd;
+    position: relative;
+}
+
+.sortable-item-body {
+    margin: 1px 0;
+    padding: 20px;
+    border-top: 1px solid #d6d6d6;
+}
+
+.sortable-item:before {
+    position: absolute;
+    background: #5867dd;
+    display: block;
+    border-radius: 4px;
+    width: 4px;
+    top: 0;
+    height: 100%;
+    content: "";
+}
+
+.sortable-item--disabled {
+    border: 1px solid #989898;
+}
+
+.sortable-item--disabled:before {
+    content: none;
+}
+
+.sortable-item--disabled .m-portlet__head {
+    cursor: pointer;
+}

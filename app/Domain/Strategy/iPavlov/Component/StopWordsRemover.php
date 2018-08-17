@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class StopWordsRemover extends Component
 {
-    protected $attributes = ['language', 'stopset'];
+    protected $attributes = ['language', 'stopset', 'optional'];
 
     protected $values = [
         'language' => ['none', 'en', 'rus'],

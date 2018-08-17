@@ -160,7 +160,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
     {
         if ($data) {
             foreach ($components as $component) {
-                $component->validate($data[\get_class($component)]);
+                $component->validate($data[$component::name()]);
             }
         }
 

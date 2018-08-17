@@ -4,20 +4,51 @@
  */
 
 /** @var \App\Domain\AiModel $model */
+/** @var \App\Domain\Strategy\Strategy $strategy */
+/** @var \App\Domain\Dataset\Dataset[] $datasets */
 
 $configuration = $model->configuration;
 $method = $model->id ? 'PUT' : 'POST';
 
 $route = $model->id ? route('ai-models.update', ['model' => $model]) : route('ai-models.store');
 
-/** @var \App\Domain\Strategy\Strategy $strategy */
-/** @var \App\Domain\Dataset\Dataset[] $datasets */
-
 $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Dataset $d) {
     return [$d->id => sprintf('%s: %s', $d->id, $d->name)];
 })->prepend('None', 0)->all();
+
+$selected = [];
+$available = [];
+
+foreach ($strategy->getComponents() as $component) {
+    if ($component->optional) {
+        $available[] = $component;
+        continue;
+    }
+    $selected[] = $component;
+}
+
+if ($model->configuration) {
+    $selected = $model->configuration->components();
+    foreach ($selected as $component) {
+        if (!$component->optional) {
+            continue;
+        }
+        foreach ($available as $k => $item) {
+            if ($item::name() === $component::name()) {
+                unset($available[$k]);
+            }
+        }
+    }
+}
 ?>
 @extends('layouts.app')
+
+@section('styles')
+    <link href="{{ asset('css/ui.css') }}" rel="stylesheet">
+@endsection
+@section('scripts')
+    <script src="{{ asset('js/ui.js') }}" defer></script>
+@endsection
 
 @section('content')
     <!-- BEGIN: Subheader -->
@@ -32,12 +63,11 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
     </div>
     <!-- END: Subheader -->
 
-
     <div class="m-content">
         <div class="form-group m-form__group m--margin-top-10">
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
-                    <div class="alert m-alert m-alert--default" role="alert">
+                    <div class="alert alert-danger m-alert m-alert--default" role="alert">
                         {{ $error }}
                     </div>
                 @endforeach
@@ -57,79 +87,39 @@ $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Datase
                     </div>
                 </div>
             </div>
-            <!--begin::Form-->
-            <form class="col-md-8 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
-                @method($method)
-                @csrf
-                <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
-                <div class="m-portlet__body">
-                    <div class="form-group m-form__group">
-                        {{ \Form::label('dataset', 'Dataset') }}
-                        {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
+
+            <div class="m-portlet__body m-portlet__body--modified">
+                <div class="m-portlet__body-left">
+                    <div class="ui-sortable left-sortable">
+                        @foreach($available as $component)
+                            @include('domain.ai_models.component', ['component' => $component])
+                        @endforeach
                     </div>
-                    @foreach($strategy->getComponents($model->configuration) as $component)
-                        <div class="m-portlet__head">
-                            <div class="m-portlet__head-caption">
-                                <div class="m-portlet__head-title">
-                                    <span class="m-portlet__head-icon m--hide">
-                                        <i class="la la-gear"></i>
-                                    </span>
-                                    <h4 class="m-portlet__head-text">
-                                        {{ $component->description() }}
-                                    </h4>
-                                </div>
+                </div>
+                <div class="m-portlet__body-right">
+                    <!--begin::Form-->
+                    <form class="col-md-12 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
+                        @method($method)
+                        @csrf
+                        <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
+                        <div class="form-group m-form__group">
+                            {{ \Form::label('dataset', 'Dataset') }}
+                            {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
+                        </div>
+                        <div class="ui-sortable right-sortable">
+                            @foreach($selected as $component)
+                                @include('domain.ai_models.component', ['component' => $component])
+                            @endforeach
+                        </div>
+                        <div class="m-portlet__foot m-portlet__foot--fit">
+                            <div class="m-form__actions m-form__actions--modified">
+                                <button type="submit" class="btn btn-accent">{{ __('Save') }}</button>
                             </div>
                         </div>
-
-                        @foreach($component->getFields() as $field)
-                            <div class="form-group m-form__group">
-                                {{ $field->getLabel() }}
-                                {{ $field->getInput() }}
-                            </div>
-                            <br>
-                        @endforeach
-                    @endforeach
+                    </form>
+                    <!--end::Form-->
                 </div>
-
-                <div class="m-portlet__foot m-portlet__foot--fit">
-                    <div class="m-form__actions">
-                        <button type="submit" class="btn btn-accent">{{ __('Save') }}</button>
-                    </div>
-                </div>
-            </form>
-            <!--end::Form-->
+            </div>
         </div>
     </div>
-@endsection
-
-@section('scripts')
-    <script>
-        $(document).ready(function () {
-            $('div.component-field-repeatable .add-repeatable').on('click', function () {
-                let fields = $(this).parents('.component-field-repeatable');
-                let clone = fields.clone(true);
-                clone.find('.remove-repeatable').removeClass('m--hide');
-
-                fields.parent().append(clone);
-                $(this).addClass('m--hide');
-                fields.find('.remove-repeatable').removeClass('m--hide');
-            });
-            $('div.component-field-repeatable .remove-repeatable').on('click', function () {
-                let fields = $(this).parents('.component-field-repeatable');
-                let parent = fields.parent();
-                fields.remove();
-
-                let last = parent.find('.component-field-repeatable').last();
-
-                parent.find('.add-repeatable').addClass('m--hide');
-                last.find('.add-repeatable').removeClass('m--hide');
-
-                fields = parent.find('.component-field-repeatable');
-                fields.find('.remove-repeatable').removeClass('m--hide');
-                if (fields.length === 1) {
-                    parent.find('.remove-repeatable').addClass('m--hide')
-                }
-            });
-        });
-    </script>
 @endsection

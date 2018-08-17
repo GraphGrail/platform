@@ -7,8 +7,10 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~jquery-ui/themes/base/all.css';
 @import "base.css";
 @import "style.bundle.css";
+@import "ui.css";
 
 .navbar-laravel {
   background-color: #fff;

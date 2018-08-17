@@ -83,13 +83,4 @@ class Configuration extends Model
         $provider = app()->get(StrategyProvider::class);
         return $provider->get($this->strategy_class);
     }
-
-    public function fillComponent(Component $component): Configuration
-    {
-        if (!$exist = $this->components()[\get_class($component)]) {
-            return $this;
-        }
-        $component->setRawAttributes($exist->getAttributes());
-        return $this;
-    }
 }

@@ -20,6 +20,7 @@ use JsonSerializable;
  * @package App\Domain
  *
  * @property bool enabled
+ * @property bool optional
  * @property int position
  */
 abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
@@ -40,7 +41,15 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
     public function __construct(Strategy $strategy, $attributes = [])
     {
         $this->strategy = $strategy;
-        $this->setRawAttributes($attributes);
+
+        $optional = false;
+        if (\in_array('optional', $this->attributes, true)) {
+            $optional = true;
+        }
+        if ($attributes) {
+            $this->setRawAttributes($attributes);
+        }
+        $this->optional = $optional;
     }
 
     /**

@@ -60,65 +60,19 @@ class AiModelController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param StrategyProvider $provider
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \App\Domain\Exception\ConfigurationException
+     * @throws ValidationException
      */
-    public function store(Request $request, StrategyProvider $provider)
+    public function store(Request $request)
     {
         $request->validate([
             'strategy' => 'required',
         ]);
-
-        $strategy = $provider->get($request->get('strategy'));
-        $datasetId = $request->get('dataset');
-
-        $data = $request->get(\get_class($strategy));
-
-        $selected = array_keys($data);
-
-        /** @var Component[] $components */
-        $components =
-            collect($strategy->getComponents())
-            ->filter(function (Component $component) use ($selected) {
-                return \in_array(\get_class($component), $selected, true);
-            })
-            ->sortBy(function (Component $component) use ($selected) {
-            return array_search($component::name(), $selected, true);
-        })->all();
-
-        $strategy->validate($components, $data);
-
-        $config = new Configuration([
-            'user_id' => Auth::id(),
-            'strategy_class' => $request['strategy'],
-        ]);
-        if (!$config->save()) {
-            throw new RuntimeException('Configuration not saved');
-        }
-        foreach ($components as $component) {
-            $class = \get_class($component);
-            $link = new Configuration\ComponentRelation([
-                'component_class' => $class,
-                'component_attributes' => $data[$class],
-            ]);
-            $config->componentRelations()->save($link);
-        }
-
         $model = new AiModel([
             'user_id' => Auth::id(),
             'status' => AiModel::STATUS_NEW,
-            'dataset_id' => $datasetId,
-            'configuration_id' => $config->id,
         ]);
-        if (!$model->save()) {
-            throw new RuntimeException('Configuration not saved');
-        }
-
-        if (!$strategy = $config->strategy()) {
-            throw new RuntimeException('Strategy not set');
-        }
-        $strategy->verification($model);
+        $this->saveComponents($request, $model);
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
@@ -156,46 +110,15 @@ class AiModelController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Domain\AiModel $model
-     * @param StrategyProvider $provider
      * @return \Illuminate\Http\RedirectResponse
+     * @throws ValidationException
      */
-    public function update(Request $request, AiModel $model, StrategyProvider $provider)
+    public function update(Request $request, AiModel $model)
     {
         $request->validate([
             'strategy' => 'required',
         ]);
-
-        $strategy = $provider->get($request->get('strategy'));
-        $datasetId = $request->get('dataset');
-
-        $data = $request->get(\get_class($strategy));
-
-        foreach ($strategy->getComponents() as $component) {
-            $component->validate($data[\get_class($component)]);
-        }
-
-        $config = $model->configuration;
-        $relations = $config->componentRelations;
-        foreach ($strategy->getComponents() as $component) {
-            $class = \get_class($component);
-            $link = new Configuration\ComponentRelation([
-                'component_class' => $class,
-            ]);
-            foreach ($relations as $relation) {
-                if ($relation->component_class === $class) {
-                    $link = $relation;
-                }
-            }
-            $link->component_attributes = $data[$class];
-            $config->componentRelations()->save($link);
-        }
-
-        $model->dataset_id = $datasetId;
-        $model->status = AiModel::STATUS_NEW;
-        if (!$model->save()) {
-            throw new RuntimeException('Configuration not saved');
-        }
-        $strategy->verification($model);
+        $this->saveComponents($request, $model);
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
@@ -248,5 +171,64 @@ class AiModelController extends Controller
         }
         $result = $strategy->exec($model, $request->get('api_query'));
         return view('domain/ai_models/show', ['model' => $model, 'result' => $result]);
+    }
+
+    /**
+     * @param Request $request
+     * @param AiModel $model
+     * @return AiModelController
+     * @throws ValidationException
+     */
+    private function saveComponents(Request $request, AiModel $model): AiModelController
+    {
+        /** @var StrategyProvider $provider */
+        $provider = app()->make(StrategyProvider::class);
+        $strategy = $provider->get($request->get('strategy'));
+        $data = $request->get(\get_class($strategy));
+
+        $selected = array_keys($data);
+
+        /** @var Component[] $components */
+        $components =
+            collect($strategy->getComponents())
+                ->filter(function (Component $component) use ($selected) {
+                    return \in_array($component::name(), $selected, true);
+                })
+                ->sortBy(function (Component $component) use ($selected) {
+                    return array_search($component::name(), $selected, true);
+                })->all()
+        ;
+
+        $strategy->validate($components, $data);
+
+        $config = $model->configuration ?? new Configuration([
+                'user_id' => Auth::id(),
+                'strategy_class' => $request['strategy'],
+            ]);
+        $config->save();
+
+        $config->componentRelations()->delete();
+        foreach ($components as $component) {
+            $class = \get_class($component);
+            $link = new Configuration\ComponentRelation([
+                'component_class' => $class,
+            ]);
+            $link->component_attributes = $data[$component::name()];
+            $config->componentRelations()->save($link);
+        }
+
+        $model->status = AiModel::STATUS_NEW;
+        $model->configuration()->associate($config);
+        if (!$model->save()) {
+            throw new RuntimeException('Configuration not saved');
+        }
+        if ($request->get('dataset')) {
+            $dataset = Dataset::query()->findOrFail($request->get('dataset'));
+            $model->dataset()->associate($dataset)->save();
+        }
+
+        $strategy->verification($model);
+
+        return $this;
     }
 }
