@@ -11,6 +11,7 @@ use App\Domain\Component;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\Storage;
+use App\Domain\Exception\VerificationException;
 use App\Domain\Strategy\iPavlov\Component\StopWordsRemover;
 use App\Domain\Strategy\iPavlov\Component\TextNormalizer;
 use App\Domain\Strategy\Result;
@@ -55,43 +56,74 @@ class Strategy extends \App\Domain\Strategy\Strategy
     /**
      * @param AiModel $model
      * @return \App\Domain\Strategy\Strategy
+     * @throws ValidationException
      * @throws \App\Domain\Exception\ConfigurationException
      */
     public function verification(AiModel $model): \App\Domain\Strategy\Strategy
     {
-        $config = $this->createJsonConfiguration($model->configuration);
-        $requestData = [
-            'model' => $model->id,
-            'config' => $config,
-        ];
+        $errors = [];
+        try {
+            $config = $this->createJsonConfiguration($model->configuration);
+            $requestData = [
+                'config' => $config,
+            ];
 
-        $response = $this->client->post('/checkConfig', [
-            RequestOptions::JSON => $requestData,
-        ]);
-        $contents = $response->getBody()->getContents();
-        if ($response->getStatusCode() !== 200) {
-            throw new RuntimeException($contents);
-        }
-        $model->status = AiModel::STATUS_VERIFY_CONFIG_FAIL;
+            $response = $this->client->post('/check_config', [
+                RequestOptions::JSON => $requestData,
+            ]);
+            $contents = $response->getBody()->getContents();
+            if ($response->getStatusCode() !== 200) {
+                throw new RuntimeException($contents);
+            }
 
-        if (false !== strpos($contents, 'ok')) {
+            if (!$contents = json_decode($contents, true)) {
+                \Log::error($response->getBody()->getContents());
+                throw new VerificationException('Invalid response');
+            }
+            if (!array_key_exists('status', $contents)) {
+                \Log::error($response->getBody()->getContents());
+                throw new VerificationException('Invalid response');
+            }
+            if (false === strpos($contents['status'], 'ok')) {
+                throw new VerificationException($contents['errors']);
+            }
             $model->status = AiModel::STATUS_VERIFY_CONFIG_OK;
+
+        } catch (VerificationException $e) {
+            \Log::error($e->getMessage());
+            $errors = $e->getErrors();
+
+            $model->status = AiModel::STATUS_VERIFY_CONFIG_FAIL;
         }
         $model->save();
+
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['errors' => $errors], [
+            'errors' => 'size:0',
+        ], ['errors.size' => __('Configuration failed: ' . implode(', ', $errors))]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
 
         return $this;
     }
 
+    /**
+     * @param AiModel $model
+     * @param Dataset $dataset
+     * @return \App\Domain\Strategy\Strategy
+     * @throws \App\Domain\Exception\ConfigurationException
+     */
     public function train(AiModel $model, Dataset $dataset): \App\Domain\Strategy\Strategy
     {
         $config = $this->createJsonConfiguration($model->configuration);
         $requestData = [
-            'model' => $model->id,
             'dataset' => (new Storage())->getPath($dataset),
             'config' => $config,
         ];
 
-        $response = $this->client->post('/learn', [
+        $response = $this->client->post('/train/' . $model->id, [
             RequestOptions::JSON => $requestData,
         ]);
         if ($response->getStatusCode() !== 200) {
@@ -106,9 +138,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
     public function status(AiModel $model): \App\Domain\Strategy\Strategy
     {
-        $response = $this->client->get('/status', [
-            RequestOptions::JSON => ['model' => $model->id],
-        ]);
+        $response = $this->client->get('/status/' . $model->id);
         $content = $response->getBody()->getContents();
         if (false !== mb_strpos($content, self::RESPONSE_STATUS_READY)) {
             $model->status = AiModel::STATUS_READY;
@@ -121,6 +151,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
+    /**
+     * @param AiModel $model
+     * @param null $data
+     * @return Result
+     * @throws \App\Domain\Exception\ConfigurationException
+     */
     public function exec(AiModel $model, $data = null): Result
     {
         if ($model->status === AiModel::STATUS_VERIFY_CONFIG_OK) {
@@ -135,10 +171,10 @@ class Strategy extends \App\Domain\Strategy\Strategy
         throw new RuntimeException('The model not ready: ' . $model->statusLabel());
     }
 
-    protected function doRequest(AiModel $model, $data)
+    protected function doRequest(AiModel $model, $data): Result
     {
-        $response = $this->client->post('/exec', [
-            RequestOptions::JSON => ['model' => $model->id, 'data' => $data],
+        $response = $this->client->post('/run/' . $model->id, [
+            RequestOptions::JSON => ['data' => $data],
         ]);
         $result = new Result($data, $response->getBody()->getContents());
         $this->logResult($model, $result);
@@ -282,6 +318,11 @@ class Strategy extends \App\Domain\Strategy\Strategy
         ];
     }
 
+    /**
+     * @param AiModel $model
+     * @return Result
+     * @throws \App\Domain\Exception\ConfigurationException
+     */
     protected function startTrain(AiModel $model): Result
     {
         $this->train($model, $model->dataset);
