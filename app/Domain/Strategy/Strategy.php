@@ -8,6 +8,7 @@ namespace App\Domain\Strategy;
 
 use App\Domain\AiModel;
 use App\Domain\Component;
+use App\Domain\Dataset\Dataset;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
@@ -24,6 +25,8 @@ abstract class Strategy
     }
 
     abstract public function name(): string;
+    abstract public function train(AiModel $model, Dataset $dataset): Strategy;
+    abstract public function stop(AiModel $model): Strategy;
     abstract public function exec(AiModel $model, $data = null): Result;
 
     abstract public function verification(AiModel $model): Strategy;

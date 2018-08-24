@@ -31,6 +31,13 @@ if ($model->status === \App\Domain\AiModel::STATUS_VERIFY_CONFIG_OK) {
     }
 }
 
+if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
+    $message = __('Model training. ');
+    if ($model->performance) {
+        $message .= sprintf('Quality %s%%', $model->performance);
+    }
+}
+
 ?>
 @extends('layouts.app')
 @section('content')
@@ -39,7 +46,10 @@ if ($model->status === \App\Domain\AiModel::STATUS_VERIFY_CONFIG_OK) {
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
-                    Ai Model: {{ $model->id }}{{ $model->dataset ? '-' . $model->dataset->name : '' }}. {{ $model->statusLabel() }}
+                    Ai Model: {{ $model->id }}{{ $model->dataset ? '-' . $model->dataset->name : '' }}. {{ $model->statusLabel() }}.
+                    @if($model->performance)
+                        Quality {{ $model->performance }}%
+                    @endif
                 </h1>
             </div>
             @if ($model->dataset)

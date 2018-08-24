@@ -153,7 +153,19 @@ class AiModelController extends Controller
         if ($model->status >= AiModel::STATUS_READY) {
             throw new RuntimeException('The model is already trained');
         }
-        $strategy->exec($model);
+        $strategy->train($model, $dataset);
+        return Redirect::to(\url('ai-models', ['model' => $model]));
+    }
+
+    public function stop(AiModel $model)
+    {
+        if (!$strategy = $model->configuration->strategy()) {
+            throw new RuntimeException('Strategy not set');
+        }
+        if ($model->status >= AiModel::STATUS_TRAINED) {
+            throw new RuntimeException('The model is already trained');
+        }
+        $strategy->stop($model);
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 

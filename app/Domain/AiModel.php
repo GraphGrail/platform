@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer id
  * @property integer status
  * @property integer user_id
+ * @property float performance
  * @property Configuration configuration
  * @property Dataset dataset
  */
@@ -30,7 +31,7 @@ class AiModel extends Model
     public const STATUS_READY              = 500;
     public const STATUS_TEST_FAIL          = 9000;
 
-    protected $fillable = ['user_id', 'status', 'dataset_id', 'configuration_id'];
+    protected $fillable = ['user_id', 'status', 'dataset_id', 'configuration_id', 'performance'];
 
     public function configuration()
     {

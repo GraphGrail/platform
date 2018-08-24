@@ -32,9 +32,10 @@ class Strategy extends \App\Domain\Strategy\Strategy
      * @param array $params
      * @throws \InvalidArgumentException
      */
-    protected const RESPONSE_STATUS_LEARNING = 'learning';
-
-    protected const RESPONSE_STATUS_READY = 'ready';
+    protected const STATUS_NOT_TRAINED = 'not_train';
+    protected const STATUS_TRAINING    = 'in_train';
+    protected const STATUS_TRAINED     = 'trained';
+    protected const STATUS_ERROR       = 'error';
 
     /**
      * Strategy constructor.
@@ -121,6 +122,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
     {
         $errors = [];
         try {
+            $contents = $this->requestModelStatus($model);
+            $status = $contents['status'];
+            if ($status === self::STATUS_TRAINING) {
+                return $this;
+            }
+
             $config = $this->createJsonConfiguration($model->configuration);
             $requestData = [
                 'dataset' => (new Storage())->getPath($dataset),
@@ -154,6 +161,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
             \Log::error($e->getMessage());
             $errors = $e->getErrors();
         }
+        $model->performance = 0;
         $model->save();
 
         /** @var \Illuminate\Validation\Validator $validator */
@@ -168,18 +176,78 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
+    public function stop(AiModel $model): \App\Domain\Strategy\Strategy
+    {
+        $errors = [];
+        try {
+
+            $response = $this->client->post('/stop/' . $model->id);
+            if ($response->getStatusCode() !== 200) {
+                throw new ExecutionException($response->getBody()->getContents());
+            }
+
+            $contents = $response->getBody()->getContents();
+            if (!$contents = json_decode($contents, true)) {
+                \Log::error($response->getBody()->getContents());
+                throw new ExecutionException('Invalid response');
+            }
+
+            $model->status = AiModel::STATUS_NEW;
+            $model->performance = 0;
+        } catch (ExecutionException $e) {
+            \Log::error($e->getMessage());
+            $errors = $e->getErrors();
+        }
+        $model->save();
+
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['errors' => $errors], [
+            'errors' => 'size:0',
+        ], ['errors.size' => __('Failed to stop training model: ' . implode(', ', $errors))]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return $this;
+    }
+
+
     public function status(AiModel $model): \App\Domain\Strategy\Strategy
     {
-        $response = $this->client->get('/status/' . $model->id);
-        $content = $response->getBody()->getContents();
-        if (false !== mb_strpos($content, self::RESPONSE_STATUS_READY)) {
-            $model->status = AiModel::STATUS_READY;
-        }
-        if (false !== mb_strpos($content, self::RESPONSE_STATUS_LEARNING)) {
-            $model->status = AiModel::STATUS_READY;
+        $errors = [];
+        try {
+            $contents = $this->requestModelStatus($model);
+            $status = $contents['status'];
+
+            if ($status === self::STATUS_ERROR) {
+                throw new ExecutionException($contents['errors'] ?? __('Check status error'));
+            }
+            if ($status === self::STATUS_NOT_TRAINED) {
+                $model->status = AiModel::STATUS_NEW;
+            }
+            if ($status === self::STATUS_TRAINING) {
+                $model->status = AiModel::STATUS_TRAINING;
+                $model->performance = $contents['perfomance'] ?? 0;
+            }
+            if ($status === self::STATUS_TRAINED) {
+                $model->status = AiModel::STATUS_READY;
+                $model->performance = $contents['perfomance'] ?? 0;
+            }
+        } catch (ExecutionException $e) {
+            $errors = $e->getErrors();
         }
 
         $model->save();
+
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['errors' => $errors], [
+            'errors' => 'size:0',
+        ], ['errors.size' => __('Failed to get status of model: ' . implode(', ', $errors))]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
         return $this;
     }
 
@@ -206,7 +274,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
     protected function doRequest(AiModel $model, $data): Result
     {
         $response = $this->client->post('/run/' . $model->id, [
-            RequestOptions::JSON => ['data' => $data],
+            RequestOptions::JSON => ['message' => $data],
         ]);
         $result = new Result($data, $response->getBody()->getContents());
         $this->logResult($model, $result);
@@ -377,5 +445,29 @@ class Strategy extends \App\Domain\Strategy\Strategy
             'query' => $result->getQuery(),
         ]);
         $log->save();
+    }
+
+    /**
+     * @param AiModel $model
+     * @return mixed|string
+     * @throws ExecutionException
+     */
+    protected function requestModelStatus(AiModel $model)
+    {
+        $response = $this->client->get('/status/' . $model->id);
+        if ($response->getStatusCode() !== 200) {
+            throw new ExecutionException($response->getBody()->getContents());
+        }
+
+        $contents = $response->getBody()->getContents();
+        if (!$contents = json_decode($contents, true)) {
+            \Log::error($response->getBody()->getContents());
+            throw new ExecutionException('Invalid response');
+        }
+        if (!array_key_exists('status', $contents)) {
+            \Log::error($response->getBody()->getContents());
+            throw new ExecutionException('Invalid response');
+        }
+        return $contents;
     }
 }
