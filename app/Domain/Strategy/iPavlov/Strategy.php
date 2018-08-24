@@ -359,6 +359,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
         return [
             'deeppavlov_root' => '',
+            'model_path' => '',
             'dataset_reader' =>
                 [
                     'name' => 'basic_classification_reader',
@@ -380,10 +381,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
                         [
                             'train',
                             'valid',
+                            'test',
                         ],
                     'split_proportions' =>
                         [
-                            0.90000000000000002,
+                            0.80000000000000002,
+                            0.10000000000000001,
                             0.10000000000000001,
                         ],
                 ],
@@ -406,14 +409,15 @@ class Strategy extends \App\Domain\Strategy\Strategy
             'train' =>
                 [
                     'validation_patience' => 10000,
-                    'epochs' => 10000,
+                    'epochs' => 5,
                     'batch_size' => 32,
                     'metrics' =>
                         [
-                            'sets_accuracy',
+                            'classification_f1',
                         ],
                     'val_every_n_epochs' => 1,
                     'log_every_n_epochs' => 1,
+                    'tensorboard_log_dir' => 'logs/',
                 ],
         ];
     }
