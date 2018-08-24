@@ -49,7 +49,7 @@ class ExtractDatasetData implements ShouldQueue
         $existLabels = $group->labels;
 
         $reader = Reader::createFromPath($storage->getPath($this->dataset), 'r');
-        $reader->setDelimiter(';');
+        $reader->setDelimiter(',');
 
         $records = $reader->getRecords();
         foreach ($records as $offset => $record) {
