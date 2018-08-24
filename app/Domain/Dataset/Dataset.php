@@ -44,7 +44,7 @@ class Dataset extends Model
 
     public function statusLabel(): string
     {
-        return $this->statuses()[$this->status];
+        return array_key_exists($this->status, $this->statuses()) ? $this->statuses()[$this->status] : '';
     }
 
     public function statuses(): array
