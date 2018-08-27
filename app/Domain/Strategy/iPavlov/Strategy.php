@@ -51,6 +51,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $guzzle = [
             'base_uri' => $params['url'],
             'timeout' => $params['timeout'] ?? 60,
+            'verify' => false,
         ];
         $this->client = new Client($guzzle);
     }
@@ -70,7 +71,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
                 'config' => $config,
             ];
 
-            $response = $this->client->post('/check_config', [
+            $response = $this->client->post('check_config', [
                 RequestOptions::JSON => $requestData,
             ]);
             $contents = $response->getBody()->getContents();
@@ -134,7 +135,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
                 'config' => $config,
             ];
 
-            $response = $this->client->post('/train/' . $model->id, [
+            $response = $this->client->post('train/' . $model->id, [
                 RequestOptions::JSON => $requestData,
             ]);
             if ($response->getStatusCode() !== 200) {
@@ -181,7 +182,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
         $errors = [];
         try {
 
-            $response = $this->client->post('/stop/' . $model->id);
+            $response = $this->client->post('stop/' . $model->id);
             if ($response->getStatusCode() !== 200) {
                 throw new ExecutionException($response->getBody()->getContents());
             }
@@ -273,7 +274,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
     protected function doRequest(AiModel $model, $data): Result
     {
-        $response = $this->client->post('/run/' . $model->id, [
+        $response = $this->client->post('run/' . $model->id, [
             RequestOptions::JSON => ['message' => $data],
         ]);
         $result = new Result($data, $response->getBody()->getContents());
@@ -354,7 +355,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
     {
         $pipe = [];
         foreach ($configuration->components() as $component) {
-            $pipe[] = $component->toJson();
+            $pipe[] = $component->buildConfig();
         }
 
         return [
@@ -458,7 +459,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
      */
     protected function requestModelStatus(AiModel $model)
     {
-        $response = $this->client->get('/status/' . $model->id);
+        $response = $this->client->get('status/' . $model->id);
         if ($response->getStatusCode() !== 200) {
             throw new ExecutionException($response->getBody()->getContents());
         }
