@@ -49,15 +49,16 @@ class NetClassifier extends ComponentForm
         'rmsprop',
         'SGD',
         'momentum',
+        'dual_bilstm_cnn_model',
     ];
 
     protected $variants = [
         'architecture' => [
 //            'bigru' => 'bigru',
-            'dcnn' => 'dcnn',
+//            'dcnn' => 'dcnn',
 //            'cnn' => 'cnn',
 //            'dense' => 'dense',
-//            'dual_bilstm_cnn_model',
+            'dual_bilstm_cnn_model',
         ],
         'loss' => [
             'categorical_crossentropy' => 'categorical_crossentropy',
