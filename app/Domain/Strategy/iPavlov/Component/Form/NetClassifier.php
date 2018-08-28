@@ -53,9 +53,10 @@ class NetClassifier extends ComponentForm
 
     protected $variants = [
         'architecture' => [
-            'bigru' => 'bigru',
-            'dcnn' => 'dcnn',
-            'dense' => 'dense',
+//            'bigru' => 'bigru',
+//            'dcnn' => 'dcnn',
+            'cnn' => 'cnn',
+//            'dense' => 'dense',
         ],
         'loss' => [
             'categorical_crossentropy' => 'categorical_crossentropy',

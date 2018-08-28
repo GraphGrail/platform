@@ -33,11 +33,11 @@ class NetClassifier extends Component
     ];
     protected $values = [
         'architecture' => [
-            'bigru',
-            'dcnn',
+//            'bigru',
+//            'dcnn',
             'cnn',
-            'dense',
-            'dual_bilstm_cnn_model',
+//            'dense',
+//            'dual_bilstm_cnn_model',
         ],
         'loss' => [
             'categorical_crossentropy',
@@ -135,7 +135,7 @@ class NetClassifier extends Component
             'in_y' => ['y'],
             'out' => ['y_pred'],
 
-            'architecture_name' => 'dual_bilstm_cnn_model',
+            'architecture_name' => $this->architecture,
             'loss' => $this->loss,
             'metrics' => [$this->metrics],
             'optimizer' => $this->optimizer,

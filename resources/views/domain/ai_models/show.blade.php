@@ -70,6 +70,15 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
                 </div>
             @endif
         </div>
+        <div class="form-group m-form__group m--margin-top-10">
+            @if ($model->getErrors())
+                @foreach ($model->getErrors() as $error)
+                    <div class="alert alert-danger m-alert m-alert--default" role="alert">
+                        {{ $error }}
+                    </div>
+                @endforeach
+            @endif
+        </div>
         @if($model->status !== \App\Domain\AiModel::STATUS_READY)
             <div class="m-portlet" id="m_blockui_2_portlet">
                 <div class="m-portlet__head">

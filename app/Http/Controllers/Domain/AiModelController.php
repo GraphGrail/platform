@@ -230,6 +230,7 @@ class AiModelController extends Controller
         }
 
         $model->status = AiModel::STATUS_NEW;
+        $model->errors = null;
         $model->configuration()->associate($config);
         if (!$model->save()) {
             throw new RuntimeException('Configuration not saved');

@@ -222,6 +222,13 @@ class Strategy extends \App\Domain\Strategy\Strategy
             $status = $contents['status'];
 
             if ($status === self::STATUS_ERROR) {
+                $model->status = AiModel::STATUS_TEST_FAIL;
+
+                $errors = $contents['errors'];
+                $errors[] = $contents['backtrace'] ?? [];
+
+                $model->setErrors($errors);
+                $model->save();
                 throw new ExecutionException($contents['errors'] ?? __('Check status error'));
             }
             if ($status === self::STATUS_NOT_TRAINED) {

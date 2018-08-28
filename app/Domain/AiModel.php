@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Domain
  * @property integer id
  * @property integer status
+ * @property array errors
  * @property integer user_id
  * @property float performance
  * @property Configuration configuration
@@ -61,5 +62,15 @@ class AiModel extends Model
             self::STATUS_READY => 'Ready',
             self::STATUS_TEST_FAIL => 'Failed',
         ];
+    }
+
+    public function setErrors($errors)
+    {
+        $this->errors = json_encode((array)$errors);
+    }
+
+    public function getErrors()
+    {
+        return (array)json_decode($this->errors, true);
     }
 }
