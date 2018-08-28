@@ -62,6 +62,22 @@ class NetClassifier extends Component
             'bilstm_layers',
             'conv_layers',
         ],
+        'bigru' => [ //todo
+            'bilstm_layers',
+            'conv_layers',
+        ],
+        'dcnn' => [
+            'bilstm_layers',
+            'conv_layers',
+        ],
+        'cnn' => [
+            'bilstm_layers',
+            'conv_layers',
+        ],
+        'dense' => [
+            'bilstm_layers',
+            'conv_layers',
+        ],
     ];
 
     public static function name(): string
@@ -143,11 +159,36 @@ class NetClassifier extends Component
         if (!$names = $this->arch_layers[$architecture]) {
             return $list;
         }
+        if (!$layers = (array)$this->layers_arch) {
+            return $list;
+        }
 
-        foreach ($this->layers as $layer) {
-            $name = $layer['name'];
-            unset($layer['name']);
+        $attributes = [];
+        foreach ($this->attributes as $name => $value) {
+            if (0 !== strpos($name, 'layers_')) {
+                continue;
+            }
+
+            $name = str_replace('layers_', '', $name);
+            $attributes[$name] = $value;
+        }
+
+        foreach ($layers as $name) {
+            $pos = array_search($name, $attributes['arch'], true);
+            if ($pos === false) {
+                continue;
+            }
+            unset($attributes['arch'][$pos]);
+
+            $layer = array_map(function ($attribute) use ($pos) {
+                if (!array_key_exists($pos, $attribute)) {
+                    return null;
+                }
+                return $attribute[$pos];
+            }, $attributes);
+
             $layer['l2_power'] = $this->l2_power;
+            unset($layer['arch']);
 
             $list[$name][] = $layer;
         }
