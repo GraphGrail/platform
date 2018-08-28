@@ -13,6 +13,7 @@ use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\Storage;
 use App\Domain\Exception\ExecutionException;
 use App\Domain\Exception\VerificationException;
+use app\Domain\Strategy\iPavlov\Component\Settings;
 use App\Domain\Strategy\iPavlov\Component\StopWordsRemover;
 use App\Domain\Strategy\iPavlov\Component\TextNormalizer;
 use App\Domain\Strategy\Result;
@@ -361,7 +362,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
     protected function createJsonConfiguration(Configuration $configuration): array
     {
         $pipe = [];
+        $settings = [];
         foreach ($configuration->components() as $component) {
+            if ($component instanceof Settings) {
+                $settings = $component->buildConfig();
+                continue;
+            }
             $pipe[] = $component->buildConfig();
         }
 
@@ -415,9 +421,9 @@ class Strategy extends \App\Domain\Strategy\Strategy
                         ],
                 ],
             'train' =>
+                array_merge($settings,
                 [
                     'validation_patience' => 10000,
-                    'epochs' => 5,
                     'batch_size' => 32,
                     'metrics' =>
                         [
@@ -426,7 +432,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
                     'val_every_n_epochs' => 1,
                     'log_every_n_epochs' => 1,
                     'tensorboard_log_dir' => 'logs/',
-                ],
+                ]),
         ];
     }
 

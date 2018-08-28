@@ -129,7 +129,7 @@ class NetClassifier extends Component
 
     public function jsonSerialize()
     {
-        return array_merge([
+        return [
             'name' => self::name(),
             'in' => ['xv'],
             'in_y' => ['y'],
@@ -140,17 +140,17 @@ class NetClassifier extends Component
             'metrics' => [$this->metrics],
             'optimizer' => $this->optimizer,
             'architecture_params' => array_merge($this->createLayers($this->architecture),[
-                'emb_dim' => $this->emb_dim,
-                'seq_len' => $this->seq_len,
-                'pool_size' => $this->pool_size,
-                'dropout_power' => $this->dropout_power,
+                'emb_dim' => (float)$this->emb_dim,
+                'seq_len' => (float)$this->seq_len,
+                'pool_size' => (float)$this->pool_size,
+                'dropout_power' => (float)$this->dropout_power,
                 'new2old' => 'new2old.pkl',
             ]),
             'classes' => 'class_names.pkl',
             'confident_threshold' => 0.14999999999999999,
             'save_path' => 'cnn_weights.hdf',
             'load_path' => 'cnn_weights.hdf5',
-        ], $this->createParams());
+        ];
     }
 
     protected function createLayers($architecture): array
@@ -187,7 +187,14 @@ class NetClassifier extends Component
                 return $attribute[$pos];
             }, $attributes);
 
-            $layer['l2_power'] = $this->l2_power;
+            $layer['l2_power'] = (float)$this->l2_power;
+            if (array_key_exists('kernel_size', $layer)) {
+                $layer['kernel_size'] = (float)$layer['kernel_size'];
+            }
+            if (array_key_exists('units', $layer)) {
+                $layer['units'] = (float)$layer['units'];
+            }
+
             unset($layer['arch']);
 
             $list[$name][] = $layer;

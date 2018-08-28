@@ -255,13 +255,6 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
      */
     protected function createParams(): array
     {
-        $params = [];
-        foreach ($this->attributes as $attribute) {
-            if (null === $this->{$attribute}) {
-                continue;
-            }
-            $params[$attribute] = $this->{$attribute};
-        }
-        return $params;
+        return (array)$this->attributes;
     }
 }

@@ -8,6 +8,7 @@ return [
     'iPavlov' => [
         'class' => \App\Domain\Strategy\iPavlov\Strategy::class,
         'components' => [
+            \App\Domain\Strategy\iPavlov\Component\Settings::class,
             \App\Domain\Strategy\iPavlov\Component\TextNormalizer::class,
             \App\Domain\Strategy\iPavlov\Component\StopWordsRemover::class,
             \App\Domain\Strategy\iPavlov\Component\Embedder::class,
