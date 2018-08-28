@@ -35,9 +35,9 @@ class NetClassifier extends Component
         'architecture' => [
 //            'bigru',
 //            'dcnn',
-            'cnn',
+//            'cnn',
 //            'dense',
-//            'dual_bilstm_cnn_model',
+            'dual_bilstm_cnn_model',
         ],
         'loss' => [
             'categorical_crossentropy',
