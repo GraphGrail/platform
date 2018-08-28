@@ -25,7 +25,7 @@ class Dataset extends Model
     public const STATUS_FILLING = 200;
     public const STATUS_READY = 300;
 
-    protected $fillable = ['user_id', 'file', 'name', 'label_group_id'];
+    protected $fillable = ['user_id', 'file', 'name', 'label_group_id', 'status'];
 
     public function data()
     {
