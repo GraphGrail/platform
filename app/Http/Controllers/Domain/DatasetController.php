@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Domain;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\LabelGroup;
 use App\Domain\Dataset\Storage;
+use App\Domain\Dataset\Validator\DelimiterRule;
 use App\Http\Controllers\Controller;
 use App\Jobs\ExtractDatasetData;
 use http\Exception\RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class DatasetController extends Controller
@@ -47,8 +49,9 @@ class DatasetController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws ValidationException
      */
     public function store(Request $request)
     {
@@ -61,15 +64,25 @@ class DatasetController extends Controller
         )) {
             throw new RuntimeException('File not saved');
         }
-        $group = new LabelGroup(['user_id' => $userId]);
-        $group->save();
-
         $dataset = new Dataset([
             'file' => $path,
             'name' => $request->file('dataset')->getClientOriginalName(),
             'user_id' => $userId,
             'status' => Dataset::STATUS_NEW,
         ]);
+
+        try {
+            $this->validateDataset($dataset);
+        } catch (ValidationException $e) {
+            $storage = new Storage();
+            $storage->delete($dataset);
+
+            throw $e;
+        }
+
+        $group = new LabelGroup(['user_id' => $userId]);
+        $group->save();
+
         $dataset->labelGroup()->associate($group);
         $dataset->save();
 
@@ -149,5 +162,15 @@ class DatasetController extends Controller
             throw new RuntimeException('Dataset not found');
         }
         return $this->storage->getDisk()->download($dataset->file, $dataset->name);
+    }
+
+    private function validateDataset(Dataset $dataset)
+    {
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = \Validator::make(['dataset' => $dataset], ['dataset' => new DelimiterRule()]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
     }
 }
