@@ -24,7 +24,13 @@
         <div class="m-portlet__body">
             <div class="alert m-alert--default" role="alert">
                 @if($result)
-                    <div>Result: {{ $result->getData() }}</div>
+                    <div>
+                        Result: {{ $result['message'] }}: {{ $result['category'] }}
+                        @if($result['root'])
+                            , {{ $result['root'] }},
+                        @endif
+                        {{ $result['confidence'] }}
+                    </div>
                 @endif
             </div>
             <div class="form-group m-form__group">
