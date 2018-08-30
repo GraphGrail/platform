@@ -25,11 +25,11 @@
             <div class="alert m-alert--default" role="alert">
                 @if($result)
                     <div>
-                        Result: {{ $result['message'] }}: {{ $result['category'] }}
                         @if($result['root'])
-                            , {{ $result['root'] }},
+                            <div>Root category: "{{ $result['root'] }}"</div>
                         @endif
-                        {{ $result['confidence'] }}
+                        <div>Category: "{{ $result['category'] }}"</div>
+                        <div>Confidence: "{{ $result['confidence'] }}"</div>
                     </div>
                 @endif
             </div>
