@@ -45,9 +45,7 @@ class Configuration extends Model
         if (null !== $this->_components) {
             return $this->_components;
         }
-        /** @var ComponentRelation[] $list */
-        $list = $this->componentRelations()->get()->all();
-        foreach ($list as $model) {
+        foreach ($this->componentRelations as $model) {
             if (!class_exists($model->component_class)) {
                 \Log::warning("Component class doesn't exist: {$model->component_class}");
                 continue;

@@ -10,6 +10,11 @@ use App\Domain\Strategy\Component\Form\ComponentForm;
 use App\Domain\Strategy\Component\Form\FieldForm;
 use Illuminate\Support\HtmlString;
 
+/**
+ * Class NetClassifier
+ * @package App\Domain\Strategy\iPavlov\Component\Form
+ * @property \App\Domain\Strategy\iPavlov\Component\NetClassifier $component
+ */
 class NetClassifier extends ComponentForm
 {
     protected $labels = [
@@ -102,6 +107,9 @@ class NetClassifier extends ComponentForm
 
     protected function get_layers()
     {
+        if (!$this->component->layers_arch) {
+            return $this->createDefaultLayers();
+        }
         $result = [];
 
         $layers = $this->component->layers_arch ?? [false];
@@ -112,6 +120,42 @@ class NetClassifier extends ComponentForm
                 'layers_kernel_size' => $this->component->layers_kernel_size[$index],
                 'layers_activation' => $this->component->layers_activation[$index],
             ];
+            $result[] = implode('', $this->createLayer($data, $index === (\count($layers) - 1)));
+        }
+
+        return new HtmlString(implode('', $result));
+    }
+
+    private function createDefaultLayers()
+    {
+        $result = [];
+        $layers = [
+            [
+                'layers_arch' => 'bilstm_layers',
+                'layers_units' => 64,
+                'layers_activation' => 'relu',
+                'layers_kernel_size' => 0,
+            ],
+            [
+                'layers_arch' => 'conv_layers',
+                'layers_units' => 128,
+                'layers_kernel_size' => 1,
+                'layers_activation' => 'relu',
+            ],
+            [
+                'layers_arch' => 'conv_layers',
+                'layers_units' => 32,
+                'layers_kernel_size' => 2,
+                'layers_activation' => 'relu',
+            ],
+            [
+                'layers_arch' => 'conv_layers',
+                'layers_units' => 16,
+                'layers_kernel_size' => 3,
+                'layers_activation' => 'relu',
+            ],
+        ];
+        foreach ($layers as $index => $data) {
             $result[] = implode('', $this->createLayer($data, $index === (\count($layers) - 1)));
         }
 

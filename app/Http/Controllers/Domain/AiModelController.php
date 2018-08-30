@@ -42,8 +42,11 @@ class AiModelController extends Controller
             /** @var Strategy $strategy */
             $strategy = $provider->get($strategy);
 
+            $model = new AiModel(['user_id' => Auth::id()]);
+            $model->configuration = $strategy->createDefaultConfiguration();
+
             return view('domain/ai_models/form', [
-                    'model' => new AiModel(['user_id' => Auth::id()]),
+                    'model' => $model,
                     'strategy' => $strategy,
                     'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
                 ]

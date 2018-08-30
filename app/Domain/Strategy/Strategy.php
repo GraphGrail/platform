@@ -8,6 +8,7 @@ namespace App\Domain\Strategy;
 
 use App\Domain\AiModel;
 use App\Domain\Component;
+use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +24,8 @@ abstract class Strategy
     {
         return $this->components;
     }
+
+    abstract public function createDefaultConfiguration(): Configuration;
 
     abstract public function name(): string;
     abstract public function train(AiModel $model, Dataset $dataset): Strategy;

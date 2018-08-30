@@ -19,6 +19,7 @@ use App\Domain\Strategy\iPavlov\Component\TextNormalizer;
 use App\Domain\Strategy\Result;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use \RuntimeException;
 
@@ -214,7 +215,6 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
-
     public function status(AiModel $model): \App\Domain\Strategy\Strategy
     {
         $errors = [];
@@ -399,9 +399,9 @@ class Strategy extends \App\Domain\Strategy\Strategy
                         ],
                     'split_proportions' =>
                         [
-                            0.80000000000000002,
-                            0.10000000000000001,
-                            0.10000000000000001,
+                            0.8,
+                            0.1,
+                            0.1,
                         ],
                 ],
             'chainer' =>
@@ -487,5 +487,27 @@ class Strategy extends \App\Domain\Strategy\Strategy
             throw new ExecutionException('Invalid response');
         }
         return $contents;
+    }
+
+    public function createDefaultConfiguration(): Configuration
+    {
+        $configuration = new Configuration([
+            'user_id' => Auth::id(),
+            'strategy_class' => \get_class($this),
+        ]);
+
+        foreach ($this->getComponents() as $component) {
+            if ($component->optional && !$component instanceof TextNormalizer) {
+                continue;
+            }
+            $class = \get_class($component);
+            $link = new Configuration\ComponentRelation([
+                'component_class' => $class,
+            ]);
+            $link->component_attributes = $component->getAttributes();
+            $configuration->componentRelations[] = $link;
+        }
+
+        return $configuration;
     }
 }
