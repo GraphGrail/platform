@@ -14,11 +14,18 @@
     </div>
     <div class="sortable-item-body">
         @foreach($component->getFields() as $field)
-            <div class="form-group m-form__group">
-                {{ $field->getLabel() }}
-                {{ $field->getInput() }}
-            </div>
-            <br>
+            @if($field->getLabel())
+                <div class="form-group m-form__group">
+                    {{ $field->getLabel() }}
+                    {{ $field->getInput() }}
+                </div>
+                <br>
+            @else
+                <div class="form-group m-form__group">
+                    {{ $field->getInput() }}
+                </div>
+            @endif
+
         @endforeach
     </div>
 </div>

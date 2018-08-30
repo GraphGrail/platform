@@ -57,4 +57,21 @@ $(document).ready(function () {
         $(this).toggleClass('toggled');
         return false;
     }).next().hide();
+
+
+    $('.stop-words.select-language').change(function () {
+        let lang = $(this).val();
+        let set = $('.stop-words.stop-sets.lang-' + lang).val();
+
+        let textarea = $('.stop-words.stop-words-remover');
+        if (!set) {
+            textarea.val('');
+            textarea.removeAttr('disabled');
+            return;
+        }
+
+        textarea.val(set);
+        textarea.attr('disabled', 'disabled');
+    });
+
 });
