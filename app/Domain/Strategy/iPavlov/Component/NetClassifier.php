@@ -178,8 +178,6 @@ class NetClassifier extends Component
             if ($pos === false) {
                 continue;
             }
-            unset($attributes['arch'][$pos]);
-
             $layer = array_map(function ($attribute) use ($pos) {
                 if (!array_key_exists($pos, $attribute)) {
                     return null;
@@ -195,7 +193,10 @@ class NetClassifier extends Component
                 $layer['units'] = (float)$layer['units'];
             }
 
-            unset($layer['arch']);
+            if ($layer['arch'] === 'bilstm_layers') {
+                unset($layer['kernel_size']);
+            }
+            unset($layer['arch'], $attributes['arch'][$pos]);
 
             $list[$name][] = $layer;
         }

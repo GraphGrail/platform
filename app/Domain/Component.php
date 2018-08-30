@@ -19,9 +19,7 @@ use JsonSerializable;
  * Class Component
  * @package App\Domain
  *
- * @property bool enabled
  * @property bool optional
- * @property int position
  */
 abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
@@ -193,7 +191,10 @@ abstract class Component implements ArrayAccess, Arrayable, Jsonable, JsonSerial
 
     public function buildConfig()
     {
-        return $this->jsonSerialize();
+        $config = $this->jsonSerialize();
+        unset($config['optional']);
+
+        return $config;
     }
 
     /**
