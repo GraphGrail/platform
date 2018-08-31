@@ -28,10 +28,16 @@
   "Configuration test passed. Now you may train your model": "Конфигурация протестирована. Теперь можно тренировать модель",
   "Configuration test passed. But you need to select dataset": "Конфигурация протестирована. Но нужно выбрать датасет",
   "Model training. ": "Тренировка модели",
+  "Config verified": "Конфигурация проверена",
+  "Training": "Идет обучение",
+  "Ready": "Готов",
+  "Failed": "Ошибка",
   "Download": "Скачать",
   "Preview": "Предпросмотр",
   "Change locale": "Изменить язык",
   "Select": "Выбрать",
   "Edit": "Редактировать",
-  "Start": "Запустить"
+  "Start": "Запустить",
+  "Delete": "Удалить",
+  "Are you sure?": "Вы уверены?"
 }

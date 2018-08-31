@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
@@ -143,12 +144,14 @@ class AiModelController extends Controller
     public function destroy(AiModel $model)
     {
         try {
-            $model->configuration->delete();
+            if ($model->configuration) {
+                $model->configuration->delete();
+            }
             $model->delete();
         } catch (\Throwable $e) {
             \Log::error($e->getMessage());
         }
-        return Redirect::to(\url('ai-models'));
+        return Response::make();
     }
 
     public function train(AiModel $model, Request $request)

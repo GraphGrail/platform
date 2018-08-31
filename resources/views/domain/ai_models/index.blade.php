@@ -39,8 +39,9 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Status</th>
+                                <th>@lang('Name')</th>
+                                <th>@lang('Status')</th>
+                                <th>@lang('Actions')</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -48,7 +49,12 @@
                                 <tr>
                                     <th scope="row">{{ $model->id }}</th>
                                     <td><a href="{{ route('ai-models.show', ['model' => $model]) }}">{{$model->getFullName()}}</a></td>
-                                    <td>{{ $model->statusLabel() }}</td>
+                                    <td>{{ __($model->statusLabel()) }}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="deleteModel({{ $model->id }})">
+                                            <i class="fa fa-trash" title="@lang('Delete')"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -60,4 +66,22 @@
             <!--end::Form-->
         </div>
     </div>
+@endsection
+@section('scripts')
+    <script language="javascript">
+        function deleteModel(id) {
+            if (!confirm("@lang('Are you sure?')")) {
+                return;
+            }
+            const url = "{{ url('ai-models') }}/" + id;
+            axios.delete(url)
+                .then(function (response) {
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    window.location.reload();
+                });
+        }
+    </script>
 @endsection
