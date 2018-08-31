@@ -47,7 +47,7 @@
                             @foreach($models as $model)
                                 <tr>
                                     <th scope="row">{{ $model->id }}</th>
-                                    <td><a href="{{ route('ai-models.show', ['model' => $model]) }}">{{$model->id}}{{ $model->dataset ? '-' . $model->dataset->name : '' }}</a></td>
+                                    <td><a href="{{ route('ai-models.show', ['model' => $model]) }}">{{$model->getFullName()}}</a></td>
                                     <td>{{ $model->statusLabel() }}</td>
                                 </tr>
                             @endforeach

@@ -46,7 +46,7 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
-                    Ai Model: {{ $model->id }}{{ $model->dataset ? '-' . $model->dataset->name : '' }}. {{ $model->statusLabel() }}.
+                    Ai Model: {{ $model->getFullName() }}. {{ $model->statusLabel() }}.
                     @if($model->performance)
                         Quality {{ $model->performance }}%
                     @endif

@@ -13,7 +13,7 @@ $method = $model->id ? 'PUT' : 'POST';
 $route = $model->id ? route('ai-models.update', ['model' => $model]) : route('ai-models.store');
 
 $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Dataset $d) {
-    return [$d->id => sprintf('%s: %s', $d->id, $d->name)];
+    return [$d->id => $d->name];
 })->prepend('None', 0)->all();
 
 $selected = [];
@@ -56,7 +56,7 @@ if ($model->configuration) {
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
-                    <h3>Ai model</h3>
+                    <h3>Ai model {{ $model->getFullName() }}</h3>
                 </h1>
             </div>
         </div>
@@ -125,6 +125,10 @@ if ($model->configuration) {
                     <form class="col-md-12 m-form m-form--fit m-form--label-align-right" method="POST" action="{{ $route }}">
                         @method($method)
                         @csrf
+                        <div class="form-group m-form__group">
+                            {{ \Form::label('name', __('Name')) }}
+                            {{ \Form::text('name', $model->name ?? '', ['class' => 'form-control m-input m-input--air']) }}
+                        </div>
                         <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
                         <div class="form-group m-form__group">
                             {{ \Form::label('dataset', 'Dataset') }}

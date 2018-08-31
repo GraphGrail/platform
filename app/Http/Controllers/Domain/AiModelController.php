@@ -70,12 +70,13 @@ class AiModelController extends Controller
     {
         $request->validate([
             'strategy' => 'required',
+            'name' => 'required|string|max:255',
         ]);
         $model = new AiModel([
             'user_id' => Auth::id(),
             'status' => AiModel::STATUS_NEW,
         ]);
-        $this->saveComponents($request, $model);
+        $this->fillModel($request, $model);
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
@@ -120,8 +121,9 @@ class AiModelController extends Controller
     {
         $request->validate([
             'strategy' => 'required',
+            'name' => 'required|string|max:255',
         ]);
-        $this->saveComponents($request, $model);
+        $this->fillModel($request, $model);
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
@@ -135,7 +137,6 @@ class AiModelController extends Controller
     public function destroy(AiModel $model)
     {
         try {
-            $model->dataset->delete();
             $model->configuration->delete();
             $model->delete();
         } catch (\Throwable $e) {
@@ -194,12 +195,14 @@ class AiModelController extends Controller
      * @return AiModelController
      * @throws ValidationException
      */
-    private function saveComponents(Request $request, AiModel $model): AiModelController
+    private function fillModel(Request $request, AiModel $model): AiModelController
     {
         /** @var StrategyProvider $provider */
         $provider = app()->make(StrategyProvider::class);
         $strategy = $provider->get($request->get('strategy'));
         $data = $request->get(\get_class($strategy));
+
+        $model->name = $request->get('name');
 
         $selected = array_keys($data);
 

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App\Domain
  * @property integer id
  * @property integer status
+ * @property string name
  * @property array errors
  * @property integer user_id
  * @property float performance
@@ -32,7 +33,7 @@ class AiModel extends Model
     public const STATUS_READY              = 500;
     public const STATUS_TEST_FAIL          = 9000;
 
-    protected $fillable = ['user_id', 'status', 'dataset_id', 'configuration_id', 'performance'];
+    protected $fillable = ['name', 'user_id', 'status', 'dataset_id', 'configuration_id', 'performance'];
 
     public function configuration()
     {
@@ -72,5 +73,15 @@ class AiModel extends Model
     public function getErrors()
     {
         return (array)json_decode($this->errors, true);
+    }
+
+    public function getFullName(): string
+    {
+        $name = $this->name ?? $this->id;
+        if ($this->dataset) {
+            $name .= '(' . $this->dataset->name . ')';
+        }
+
+        return (string)$name;
     }
 }
