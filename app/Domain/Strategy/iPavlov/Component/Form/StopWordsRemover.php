@@ -12,12 +12,12 @@ use App\Domain\Strategy\Component\Form\FieldForm;
 class StopWordsRemover extends ComponentForm
 {
     protected $labels = [
-        'language' => 'Стандартный набор стоп слов',
-        'stopset' => 'Свой набо стоп-слов',
+        'language' => 'Default language-specific',
+        'stopset' => 'Add your own',
     ];
 
     protected $valueLabels = [
-        'none' => 'Не использовать стандартный набор',
+        'none' => 'I fill my stopwords (do not use default list)',
         'rus' => 'Rus',
         'en' => 'En',
     ];
@@ -43,7 +43,7 @@ class StopWordsRemover extends ComponentForm
     protected function getLanguage()
     {
         return \Form::select($this->createName('language'), [
-            'none' => $this->valueLabels['none'],
+            'none' => __($this->valueLabels['none']),
             'rus' => $this->valueLabels['rus'],
             'en' => $this->valueLabels['en'],
 

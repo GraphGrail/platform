@@ -8,6 +8,7 @@
   "Ai model": "Модель",
   "Create model": "Создать модель",
   "Add": "Добавить",
+  "None": "Нет",
   "Ai Models": "Модели",
   "Status": "Статус",
   "About": "О нас",
@@ -39,5 +40,16 @@
   "Edit": "Редактировать",
   "Start": "Запустить",
   "Delete": "Удалить",
-  "Are you sure?": "Вы уверены?"
+  "Are you sure?": "Вы уверены?",
+  "Stopwords remover": "Модуль стоп слов",
+  "Choose stopwords list": "Выберите набор стоп слов",
+  "Default language-specific": "Стандартный набор стоп слов",
+  "Add your own": "Добавить свой набор стоп слов",
+  "I fill my stopwords (do not use default list)": "Не использовать стандартный набор",
+  "Text normalizer.": "Нормализатор текста.",
+  "Removes insignificant text parts (links, e-mails, numbers). Normalize your text.": "Удаляет неинформативный текст (ссылки, e-mail адреса, числа). Приводит слова к нормальной форме.",
+  "Lemmatization": "Лемматизация",
+  "Stemming": "Стемминг",
+  "Choose normalizer method: lemmatization or stemming (depends mostly on language, read more at https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.htm":"Способ приведения слов к нормальной форме: лемматизация - приведение к инфинитиву, стемминг - отбрасывание окончаний",
+  "Tokenizer algorithm": "Алгоритм разбиения текста на токены"
 }

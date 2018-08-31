@@ -29,7 +29,7 @@ class StopWordsRemover extends Component
 
     public function description(): string
     {
-        return 'Модуль стоп слов';
+        return __('Stopwords remover');
     }
 
     /**

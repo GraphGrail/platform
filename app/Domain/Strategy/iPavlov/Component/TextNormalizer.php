@@ -26,7 +26,7 @@ class TextNormalizer extends Component
 
     public function description(): string
     {
-        return 'Нормализатор текста. Удаляет неинформативный текст (ссылки, e-mail адреса, числа). Приводит слова к нормальной форме.';
+        return __('Text normalizer.') . PHP_EOL . __('Removes insignificant text parts (links, e-mails, numbers). Normalize your text.');
     }
 
     /**

@@ -46,6 +46,6 @@ abstract class ComponentForm
      */
     protected function createLabel($name)
     {
-        return \Form::label($this->createName($name), $this->labels[$name]);
+        return \Form::label($this->createName($name), __($this->labels[$name]));
     }
 }
