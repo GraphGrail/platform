@@ -87,7 +87,7 @@ class NetClassifier extends Component
 
     public function description(): string
     {
-        return 'Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности.';
+        return __('Neural network classification.  Accept Features and predict category for given text. Also measure accuracy and confidence level');
     }
 
     /**

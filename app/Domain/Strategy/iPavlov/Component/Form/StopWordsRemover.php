@@ -12,7 +12,7 @@ use App\Domain\Strategy\Component\Form\FieldForm;
 class StopWordsRemover extends ComponentForm
 {
     protected $labels = [
-        'language' => 'Default language-specific',
+        'language' => 'Choose stopwords list: default language-specific or add your own',
         'stopset' => 'Add your own',
     ];
 

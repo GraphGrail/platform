@@ -43,7 +43,7 @@
   "Are you sure?": "Вы уверены?",
   "Stopwords remover": "Модуль стоп слов",
   "Choose stopwords list": "Выберите набор стоп слов",
-  "Default language-specific": "Стандартный набор стоп слов",
+  "Choose stopwords list: default language-specific or add your own": "Стандартный набор стоп слов",
   "Add your own": "Добавить свой набор стоп слов",
   "I fill my stopwords (do not use default list)": "Не использовать стандартный набор",
   "Text normalizer.": "Нормализатор текста.",
@@ -51,5 +51,7 @@
   "Lemmatization": "Лемматизация",
   "Stemming": "Стемминг",
   "Choose normalizer method: lemmatization or stemming (depends mostly on language, read more at https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.htm":"Способ приведения слов к нормальной форме: лемматизация - приведение к инфинитиву, стемминг - отбрасывание окончаний",
-  "Tokenizer algorithm": "Алгоритм разбиения текста на токены"
+  "Tokenizer algorithm": "Алгоритм разбиения текста на токены",
+  "Choose Feature Engineering type. Use default settings if you are unfamiliar with it.": "Преобразователь текста в признаковое пространство, т.е. в вид, приемлемый для обработки AI алгоритмом",
+  "Neural network classification.  Accept Features and predict category for given text. Also measure accuracy and confidence level": "Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности."
 }

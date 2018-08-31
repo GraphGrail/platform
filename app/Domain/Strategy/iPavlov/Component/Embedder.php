@@ -32,7 +32,7 @@ class Embedder extends Component
 
     public function description(): string
     {
-        return 'Преобразователь текста в признаковое пространство, т.е. в вид, приемлемый для обработки AI алгоритмом';
+        return __('Choose Feature Engineering type. Use default settings if you are unfamiliar with it.');
     }
 
     /**
