@@ -56,11 +56,15 @@ class StopWordsRemover extends Component
 
     public function jsonSerialize()
     {
+        $params = array_filter($this->createParams(), function ($value) {
+            return $value !== null;
+        });
+
         return array_merge([
             'name' => self::name(),
             'id' => self::name(),
             'in' => ['x'],
             'out' => ['xnr'],
-        ], $this->createParams());
+        ], $params);
     }
 }
