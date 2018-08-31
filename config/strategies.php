@@ -15,5 +15,6 @@ return [
             \App\Domain\Strategy\iPavlov\Component\NetClassifier::class,
         ],
         'url' => env('AI_IPAVLOV_URI'),
+        'api_key' => env('AI_IPAVLOV_API_KEY'),
     ],
 ];

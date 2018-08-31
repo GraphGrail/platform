@@ -52,9 +52,12 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
         $guzzle = [
             'base_uri' => $params['url'],
-            'timeout' => $params['timeout'] ?? 60,
-            'verify' => false,
-            'http_errors' => false,
+            RequestOptions::TIMEOUT => $params['timeout'] ?? 60,
+            RequestOptions::VERIFY => false,
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::HEADERS => [
+                'GGPlatform-Api-Key' => $params['api_key'],
+            ],
         ];
         $this->client = new Client($guzzle);
     }
