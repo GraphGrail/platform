@@ -48,7 +48,13 @@ class AiModelController extends Controller
             return view('domain/ai_models/form', [
                     'model' => $model,
                     'strategy' => $strategy,
-                    'datasets' => Dataset::query()->where(['status' => Dataset::STATUS_READY])->get()->all(),
+                    'datasets' =>
+                        Dataset::query()
+                             ->where([
+                                 'status' => Dataset::STATUS_READY,
+                             ])
+                             ->whereIn('user_id', [0, Auth::id()])
+                             ->get()->all(),
                 ]
             );
         }

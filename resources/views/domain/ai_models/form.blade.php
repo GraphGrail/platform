@@ -13,7 +13,7 @@ $method = $model->id ? 'PUT' : 'POST';
 $route = $model->id ? route('ai-models.update', ['model' => $model]) : route('ai-models.store');
 
 $datasets = collect($datasets)->mapWithKeys(function (\App\Domain\Dataset\Dataset $d) {
-    return [$d->id => $d->name];
+    return [$d->id => $d->getFullName()];
 })->prepend('None', 0)->all();
 
 $selected = [];

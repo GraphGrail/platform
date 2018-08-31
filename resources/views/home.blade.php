@@ -49,7 +49,7 @@
                         @foreach($datasets as $dataset)
                             <tr>
                                 <th scope="row">{{ $dataset->id }}</th>
-                                <td><a href="{{ route('datasets.show', ['dataset' => $dataset]) }}">{{ $dataset->name }}</a></td>
+                                <td><a href="{{ route('datasets.show', ['dataset' => $dataset]) }}">{{ $dataset->getFullName() }}</a></td>
                                 <td>{{ $dataset->statusLabel() }}</td>
                             </tr>
                         @endforeach

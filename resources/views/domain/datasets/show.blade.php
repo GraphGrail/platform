@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
-                    <h3>Dataset: {{ $dataset->name }}</h3>
+                    <h3>Dataset: {{ $dataset->getFullName() }}</h3>
                     <a href="{{ route('datasets.download', ['dataset' => $dataset]) }}"
                        class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
                     <a href="{{ route('datasets.edit', ['dataset' => $dataset]) }}"

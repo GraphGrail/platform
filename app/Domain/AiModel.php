@@ -79,7 +79,7 @@ class AiModel extends Model
     {
         $name = $this->name ?? $this->id;
         if ($this->dataset) {
-            $name .= '(' . $this->dataset->name . ')';
+            $name .= '(' . $this->dataset->getFullName() . ')';
         }
 
         return (string)$name;

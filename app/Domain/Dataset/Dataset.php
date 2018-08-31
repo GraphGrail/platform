@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer id
  * @property integer user_id
  * @property integer status
+ * @property bool system
  * @property string name
  * @property string lang
  * @property string file
@@ -55,5 +56,15 @@ class Dataset extends Model
             self::STATUS_FILLING => 'Filling',
             self::STATUS_READY => 'Ready',
         ];
+    }
+
+    public function getFullName(): string
+    {
+        $name = $this->name;
+        if ($this->lang) {
+            $name .= '[' . $this->lang . ']';
+        }
+
+        return $name;
     }
 }
