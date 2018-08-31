@@ -54,6 +54,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
             'base_uri' => $params['url'],
             'timeout' => $params['timeout'] ?? 60,
             'verify' => false,
+            'http_errors' => false,
         ];
         $this->client = new Client($guzzle);
     }

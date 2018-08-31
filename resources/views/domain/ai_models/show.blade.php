@@ -73,6 +73,15 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
             @endif
         </div>
         <div class="form-group m-form__group m--margin-top-10">
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div class="alert alert-danger m-alert m-alert--default" role="alert">
+                        {{ $error }}
+                    </div>
+                @endforeach
+            @endif
+        </div>
+        <div class="form-group m-form__group m--margin-top-10">
             @if ($model->getErrors())
                 @foreach ($model->getErrors() as $error)
                     <div class="alert alert-danger m-alert m-alert--default" role="alert">
