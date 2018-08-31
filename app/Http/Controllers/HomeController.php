@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Domain\AiModel;
 use App\Domain\Dataset\Dataset;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 
 class HomeController extends Controller
 {
@@ -33,5 +36,19 @@ class HomeController extends Controller
             'datasets' => $datasets,
             'models' => $models,
         ]);
+    }
+
+    public function locale(Request $request)
+    {
+        $this->validate($request, [
+            'locale' => Rule::in(['ru', 'en']),
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $user->locale = $request->get('locale');
+        $user->save();
+
+        return Redirect::back();
     }
 }

@@ -56,7 +56,7 @@ if ($model->configuration) {
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
-                    <h3>Ai model {{ $model->getFullName() }}</h3>
+                    <h3>@lang('Ai model') {{ $model->getFullName() }}</h3>
                 </h1>
             </div>
         </div>
@@ -82,7 +82,7 @@ if ($model->configuration) {
 						<i class="la la-gear"></i>
 						</span>
                         <h3 class="m-portlet__head-text">
-                            Create model "{{ $strategy->name() }}"
+                            @lang('Create model') "{{ $strategy->name() }}"
                         </h3>
                     </div>
                 </div>
@@ -131,11 +131,11 @@ if ($model->configuration) {
                         </div>
                         <input type="hidden" name="strategy" value="{{ $strategy->getFormName() }}">
                         <div class="form-group m-form__group">
-                            {{ \Form::label('dataset', 'Dataset') }}
+                            {{ \Form::label('dataset', __('Dataset')) }}
                             {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
                         </div>
                         <div class="form-group m-form__group">
-                            <span class="alert m-alert--default dataset-classes m--hide">Classes: <span class="dataset-classes-items"></span></span>
+                            <span class="alert m-alert--default dataset-classes m--hide">@lang('Classes'): <span class="dataset-classes-items"></span></span>
                         </div>
                         <div class="ui-sortable right-sortable">
                             @foreach($selected as $component)

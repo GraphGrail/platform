@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * Class User
  * @package App
  * @property boolean isAdmin
+ * @property string locale
  */
 class User extends Authenticatable
 {
@@ -20,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'isAdmin', 'api_token'
+        'name', 'email', 'password', 'isAdmin', 'api_token', 'locale',
     ];
 
     /**

@@ -15,7 +15,7 @@
                     <li class="m-nav__item">
                         <a href="https://graphgrail.com" class="m-nav__link">
                             <span class="m-nav__link-text">
-                                About
+                                @lang('About')
                             </span>
                         </a>
                     </li>

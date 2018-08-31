@@ -23,6 +23,7 @@ Auth::routes();
 
 Route::middleware('auth')->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
+    Route::post('/change-locale', 'HomeController@locale')->name('change-locale');
 
     Route::get('/datasets/download/{dataset}', 'Domain\DatasetController@download')->name('datasets.download');
     Route::resource('datasets', 'Domain\DatasetController');

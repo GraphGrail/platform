@@ -83,8 +83,8 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Dataset</th>
-                            <th>Status</th>
+                            <th>@lang('Dataset')</th>
+                            <th>@lang('Status')</th>
                         </tr>
                         </thead>
                         <tbody>

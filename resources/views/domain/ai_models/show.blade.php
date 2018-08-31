@@ -34,7 +34,7 @@ if ($model->status === \App\Domain\AiModel::STATUS_VERIFY_CONFIG_OK) {
 if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
     $message = __('Model training. ');
     if ($model->performance) {
-        $message .= sprintf('Quality %s%%', $model->performance);
+        $message .= sprintf('%s %s%%', __('Confidence'), $model->performance);
     }
 }
 
@@ -57,9 +57,9 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
                    class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
                 <a href="{{ route('datasets.show', ['dataset' => $model->dataset]) }}"
                    class="btn m-btn--pill m-btn--air btn-accent">{{ __('Preview') }}</a>
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Edit</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">@lang('Edit')</a>
             @else
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Empty dataset</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">@lang('Empty dataset')</a>
             @endif
         </div>
     </div>
@@ -106,7 +106,7 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
                                     @csrf
                                     <input type="hidden" name="model" value="{{ $model->id }}">
                                     <input type="hidden" name="dataset" value="{{ $model->dataset ? $model->dataset->id : '' }}">
-                                    <button class="btn btn-accent " type="submit">Start</button>
+                                    <button class="btn btn-accent " type="submit">@lang('Start')</button>
                                 </form>
                             @endif
                         </div>
