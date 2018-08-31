@@ -2,12 +2,13 @@
 /**
  * @author Juriy Panasevich <u.panasevich@graphgrail.com>
  */
-
+/** @var \App\Domain\Dataset\Dataset $dataset */
 ?>
 @extends('layouts.app')
 @section('content')
     <!-- BEGIN: Subheader -->
     <div class="m-subheader ">
+        <a href="{{ url()->previous() }}" class="btn btn-default m-btn--pill m-btn--air"><i class="fa fa-reply"></i> Back</a>
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
@@ -47,7 +48,7 @@
                     <div class="m-section__content">
                         <table class="table">
                             <tbody>
-                            @foreach($dataset->labelGroup->labels as $label)
+                            @foreach($dataset->labelGroup->labels()->orderBy('id')->limit(100)->get()->all() as $label)
                                 <tr>
                                     <td>{{ $label->text }}</th>
                                 </tr>

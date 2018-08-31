@@ -55,6 +55,8 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
             @if ($model->dataset)
                 <a href="{{ route('datasets.download', ['dataset' => $model->dataset]) }}"
                    class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
+                <a href="{{ route('datasets.show', ['dataset' => $model->dataset]) }}"
+                   class="btn m-btn--pill m-btn--air btn-accent">{{ __('Preview') }}</a>
                 <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Edit</a>
             @else
                 <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">Empty dataset</a>
