@@ -47,17 +47,17 @@ class StopWordsRemover extends ComponentForm
             'rus' => $this->valueLabels['rus'],
             'en' => $this->valueLabels['en'],
 
-        ], $this->component->language ?? 'none', ['class' => $this->class . ' stop-words select-language']);
+        ], $this->component->language ?? 'rus', ['class' => $this->class . ' stop-words select-language']);
     }
 
     protected function getStopSet()
     {
         $htmlOptions = ['class' => $this->class . ' stop-words stop-words-remover'];
-        if ($preset = $this->sets[$this->component->language]) {
+        if ($preset = $this->sets[$this->component->language ?? 'rus']) {
             $htmlOptions['disabled'] = 'disabled';
         }
 
-        return \Form::textarea($this->createName('stopset'), $this->component->stopset ?? $preset, $htmlOptions);
+        return \Form::textarea($this->createName('stopset'), $this->component->stopset ?? implode(',', $preset), $htmlOptions);
     }
 
     private function createSet(string $name, array $set)
