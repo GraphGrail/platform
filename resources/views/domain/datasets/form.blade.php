@@ -6,6 +6,13 @@
 /** @var \App\Domain\Dataset\Dataset $dataset */
 //$url = $dataset->id ? url('datasets') : url('datasets');
 $method = $dataset->id ? 'put' : 'post';
+$route = $dataset->id ? route('datasets.update', ['dataset' => $dataset]) : route('datasets.store');
+
+$langs = [
+    'ru' => 'Rus',
+    'en' => 'Eng',
+];
+
 ?>
 
 @extends('layouts.app')
@@ -22,10 +29,6 @@ $method = $dataset->id ? 'put' : 'post';
     </div>
     <!-- END: Subheader -->
     <div class="m-content">
-        @if($dataset->file)
-            <h4>{{$dataset->file}}</h4>
-        @endif
-
         <div class="m-portlet m-portlet--tab">
             <div class="m-portlet__head">
                 <div class="m-portlet__head-caption">
@@ -41,9 +44,10 @@ $method = $dataset->id ? 'put' : 'post';
             </div>
             <!--begin::Form-->
             {!! Form::model($dataset, [
-                'url' => url('datasets'), 'files' => true, 'method' => $method,
+                'url' => $route, 'files' => true,
                 'class' => 'm-form m-form--fit m-form--label-align-right',
             ]); !!}
+            @method($method)
                 <div class="m-portlet__body">
                     <div class="form-group m-form__group m--margin-top-10">
                         @if ($errors->any())
@@ -58,12 +62,22 @@ $method = $dataset->id ? 'put' : 'post';
 
                     </div>
                     <div class="form-group m-form__group">
-                        <label>File</label>
-                        <div class="custom-file">
-                            {!! Form::file('dataset', ['class' => 'custom-file-input']); !!}
-                            <label class="custom-file-label" for="customFile">Choose file</label>
-                        </div>
+                        {{ \Form::label('name', __('Name')) }}
+                        {{ \Form::text('name', $dataset->name ?? '', ['class' => 'form-control m-input m-input--air']) }}
                     </div>
+                    <div class="form-group m-form__group">
+                        {{ \Form::label('name', __('Name')) }}
+                        {{ \Form::select('lang', $langs, $dataset->lang ?? 'ru', ['class' => 'form-control m-input m-input--air']) }}
+                    </div>
+                    @if(!$dataset->file)
+                        <div class="form-group m-form__group">
+                            <label>File</label>
+                            <div class="custom-file">
+                                {!! Form::file('dataset', ['class' => 'custom-file-input']); !!}
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="m-portlet__foot m-portlet__foot--fit">
                     <div class="m-form__actions">

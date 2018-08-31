@@ -15,6 +15,8 @@
                     <h3>Dataset: {{ $dataset->name }}</h3>
                     <a href="{{ route('datasets.download', ['dataset' => $dataset]) }}"
                        class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
+                    <a href="{{ route('datasets.edit', ['dataset' => $dataset]) }}"
+                       class="btn m-btn--pill m-btn--air btn-primary">{{ __('Edit') }}</a>
                 </h1>
             </div>
         </div>

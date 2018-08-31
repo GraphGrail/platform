@@ -58,6 +58,8 @@ class DatasetController extends Controller
         $userId = $request->user()->id;
         $request->validate([
             'dataset' => 'required|file|mimes:csv,txt',
+            'name' => 'required|string|max:255',
+            'lang' => 'required|string|max:2',
         ]);
         if (!$path = $request->file('dataset')->store(
             $userId, $this->storage->getDiskName()
@@ -66,7 +68,8 @@ class DatasetController extends Controller
         }
         $dataset = new Dataset([
             'file' => $path,
-            'name' => $request->file('dataset')->getClientOriginalName(),
+            'name' => $request->get('name'),
+            'lang' => $request->get('lang'),
             'user_id' => $userId,
             'status' => Dataset::STATUS_NEW,
         ]);
@@ -127,19 +130,14 @@ class DatasetController extends Controller
             throw new AccessDeniedHttpException('Dataset belong to another user');
         }
         $request->validate([
-            'dataset' => 'required|file|mimes:csv',
+            'name' => 'required|string|max:255',
+            'lang' => 'required|string|max:2',
         ]);
-        if (!$path = $request->file('dataset')->store(
-            $userId, $this->storage->getDiskName()
-        )) {
-            throw new RuntimeException('File not saved');
-        }
 
-        $dataset->file = $path;
-        $dataset->name = $request->file('dataset')->getClientOriginalName();
+        $dataset->name = $request->get('name');
+        $dataset->lang = $request->get('lang');
         $dataset->save();
 
-        ExtractDatasetData::dispatch($dataset)->onQueue('dataset');
         return Redirect::to('/datasets/' . $dataset->id);
     }
 
