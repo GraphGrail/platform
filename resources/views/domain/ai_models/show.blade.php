@@ -159,3 +159,26 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
         @endif
     </div>
 @endsection
+
+@if($model->status == \App\Domain\AiModel::STATUS_TRAINING)
+    @section('scripts')
+        <script language="javascript">
+            let checker = function() {
+                axios.get("{{ route('ai-models.status', ['model' => $model]) }}")
+                    .then(function (response) {
+                        if (!response.data) {
+                            return;
+                        }
+                        if (response.data == "{{ \App\Domain\AiModel::STATUS_TRAINING }}") {
+                            return;
+                        }
+                        window.location.reload();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            };
+            setInterval(checker, 5000);
+        </script>
+    @endsection
+@endif

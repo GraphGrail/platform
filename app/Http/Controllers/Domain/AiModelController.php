@@ -247,4 +247,9 @@ class AiModelController extends Controller
 
         return $this;
     }
+
+    public function status(AiModel $model)
+    {
+        return $model->status;
+    }
 }
