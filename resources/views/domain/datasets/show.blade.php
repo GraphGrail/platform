@@ -15,8 +15,11 @@
                     <h3>Dataset: {{ $dataset->getFullName() }}</h3>
                     <a href="{{ route('datasets.download', ['dataset' => $dataset]) }}"
                        class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
+
+                    @if($dataset->user_id == \Auth::id())
                     <a href="{{ route('datasets.edit', ['dataset' => $dataset]) }}"
                        class="btn m-btn--pill m-btn--air btn-primary">{{ __('Edit') }}</a>
+                    @endif
                 </h1>
             </div>
         </div>
