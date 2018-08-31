@@ -130,6 +130,9 @@ if ($model->configuration) {
                             {{ \Form::label('dataset', 'Dataset') }}
                             {{ \Form::select('dataset', $datasets, $model->dataset ? $model->dataset->id : null,['class' => 'form-control m-input m-input--air']) }}
                         </div>
+                        <div class="form-group m-form__group">
+                            <span class="alert m-alert--default dataset-classes m--hide">Classes: <span class="dataset-classes-items"></span></span>
+                        </div>
                         <div class="ui-sortable right-sortable">
                             @foreach($selected as $component)
                                 @include('domain.ai_models.component', ['component' => $component])

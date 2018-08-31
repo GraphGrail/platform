@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('labels', 'Domain\LabelController@index');
     Route::get('labels/{group}', 'Domain\LabelController@show');
+    Route::get('/labels/json/{dataset}', 'Domain\LabelController@json');
 
     Route::post('ai-models/train/{model}', 'Domain\AiModelController@train', ['parameters' => ['ai-models' => 'model']]);
     Route::post('ai-models/stop/{model}', 'Domain\AiModelController@stop', ['parameters' => ['ai-models' => 'model']]);

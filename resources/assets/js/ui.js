@@ -74,4 +74,29 @@ $(document).ready(function () {
         textarea.attr('disabled', 'disabled');
     });
 
+    $('#dataset').change(function () {
+        let field = $('.dataset-classes');
+        let countField = field.find('.dataset-classes-items');
+        let datasetId = $(this).val() - 0;
+
+        field.addClass('m--hide');
+        countField.html('');
+
+        if (!datasetId) {
+            return;
+        }
+
+        axios.get('/labels/json/' + datasetId)
+            .then(function (response) {
+                if (!response.data) {
+                    return;
+                }
+                field.removeClass('m--hide');
+                countField.html(response.data.length);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+
 });
