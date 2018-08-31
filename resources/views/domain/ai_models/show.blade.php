@@ -133,11 +133,20 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
 
                     </span>
                         <div class="m-section__content">
+                            <strong>Post example:</strong>
                             <div class="alert m-alert--default" role="alert">
-                                <strong>Url:</strong> {{ route('api.exec', ['model' => $model]) }}
+                                <div>
+                                    <div><strong>POST</strong> {{ route('api.exec', ['model' => $model]) }}</div>
+                                    <div><strong>Accept:</strong> application/json</div>
+                                    <div><strong>Content-Type:</strong> application/json</div>
+                                    <div><strong>Authorization:</strong> Bearer {{ Auth::user()->api_token }}</div>
+                                    <div><strong>Body:</strong></div>
+                                    <div>{"data": "Text to classify"}</div>
+                                </div>
                             </div>
+                            <strong>Curl example:</strong>
                             <div class="alert m-alert--default" role="alert">
-                                <strong>Bearer Token:</strong> {{ Auth::user()->api_token }}
+                                curl {{ route('api.exec', ['model' => $model]) }} -X POST -H 'Authorization: Bearer {{ Auth::user()->api_token }}' -H 'Content-Type: application/json' --data '{"data":"Text to classify"}'
                             </div>
                         </div>
                     </div>
