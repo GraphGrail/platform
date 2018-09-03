@@ -53,7 +53,7 @@
                     <div class="m-section__content">
                         <table class="table">
                             <tbody>
-                            @foreach($dataset->labelGroup->labels()->orderBy('id')->limit(100)->get()->all() as $label)
+                            @foreach($dataset->data()->orderBy('id')->limit(100)->get()->all() as $label)
                                 <tr>
                                     <td>{{ $label->text }}</th>
                                 </tr>
