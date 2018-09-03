@@ -32,8 +32,9 @@ class DatasetController extends Controller
     public function index()
     {
         $datasets = Dataset::query()->where(['user_id' => Auth::id()])->get()->all();
+        $system = Dataset::query()->where(['user_id' => 0])->get()->all();
 
-        return view('domain/datasets/index', ['datasets' => $datasets]);
+        return view('domain/datasets/index', ['datasets' => $datasets, 'system' => $system]);
     }
 
     /**

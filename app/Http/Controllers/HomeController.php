@@ -30,10 +30,12 @@ class HomeController extends Controller
     public function index()
     {
         $datasets = Dataset::query()->where(['user_id' => Auth::id()])->get()->all();
+        $system = Dataset::query()->where(['user_id' => 0])->get()->all();
         $models = AiModel::query()->where(['user_id' => Auth::id()])->get()->all();
 
         return view('home', [
             'datasets' => $datasets,
+            'system' => $system,
             'models' => $models,
         ]);
     }
