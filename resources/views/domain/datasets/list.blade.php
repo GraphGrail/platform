@@ -10,8 +10,9 @@
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>File</th>
-                        <th>Status</th>
+                        <th>@lang('File')</th>
+                        <th>@lang('Status')</th>
+                        <th>@lang('Actions')</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -20,6 +21,13 @@
                             <th scope="row">{{ $dataset->id }}</th>
                             <td><a href="{{ route('datasets.show', ['dataset' => $dataset]) }}">{{ $dataset->getFullName() }}</a></td>
                             <td>{{ $dataset->statusLabel() }}</td>
+                            <td>
+                                @if($dataset->user_id)
+                                    <a href="javascript:void(0);" onclick="deleteDataset({{ $dataset->id }})">
+                                        <i class="fa fa-trash" title="@lang('Delete')"></i>
+                                    </a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -30,3 +38,21 @@
     </div>
     <!--end::Form-->
 </div>
+@section('scripts')
+    <script language="javascript">
+        function deleteDataset(id) {
+            if (!confirm("@lang('Are you sure?')")) {
+                return;
+            }
+            const url = "{{ url('datasets') }}/" + id;
+            axios.delete(url)
+                .then(function (response) {
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    window.location.reload();
+                });
+        }
+    </script>
+@endsection

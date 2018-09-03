@@ -12,6 +12,7 @@ use http\Exception\RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -146,13 +147,19 @@ class DatasetController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Domain\Dataset\Dataset $dataset
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response
      * @throws \Exception
      */
     public function destroy(Dataset $dataset)
     {
+        if ($dataset->user_id != Auth::id()) {
+            return Response::make();
+        }
+
+        $this->storage->getDisk()->delete($dataset->file);
         $dataset->delete();
-        return Redirect::to('datasets');
+
+        return Response::make();
     }
 
     public function download(Dataset $dataset)
