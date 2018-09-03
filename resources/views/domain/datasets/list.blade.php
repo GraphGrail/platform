@@ -23,7 +23,7 @@
                             <td>{{ $dataset->statusLabel() }}</td>
                             <td>
                                 @if($dataset->user_id)
-                                    <a href="javascript:void(0);" onclick="deleteDataset({{ $dataset->id }}, '{{ $dataset->name }}')">
+                                    <a href="javascript:void(0);" onclick="deleteDataset({{ $dataset->id }}, '{{ $dataset->getFullName() }}')">
                                         <i class="fa fa-trash" title="@lang('Delete')"></i>
                                     </a>
                                 @endif
@@ -41,7 +41,7 @@
 @section('scripts')
     <script language="javascript">
         function deleteDataset(id, name) {
-            if (!confirm("@lang('Are you sure?')" + " " + "Delete" + " " + name)) {
+            if (!confirm("@lang('Are you sure?')" + " " + "@lang('Delete')" + " " + name + "?")) {
                 return;
             }
             const url = "{{ url('datasets') }}/" + id;

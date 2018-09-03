@@ -51,7 +51,7 @@
                                     <td><a href="{{ route('ai-models.show', ['model' => $model]) }}">{{$model->getFullName()}}</a></td>
                                     <td>{{ __($model->statusLabel()) }}</td>
                                     <td>
-                                        <a href="javascript:void(0);" onclick="deleteModel({{ $model->id }})">
+                                        <a href="javascript:void(0);" onclick="deleteModel({{ $model->id }}, '{{ $model->getFullName() }}')">
                                             <i class="fa fa-trash" title="@lang('Delete')"></i>
                                         </a>
                                     </td>
@@ -69,8 +69,8 @@
 @endsection
 @section('scripts')
     <script language="javascript">
-        function deleteModel(id) {
-            if (!confirm("@lang('Are you sure?')")) {
+        function deleteModel(id, name) {
+            if (!confirm("@lang('Are you sure?')" + " " + "@lang('Delete')" + " " + name + "?")) {
                 return;
             }
             const url = "{{ url('ai-models') }}/" + id;
