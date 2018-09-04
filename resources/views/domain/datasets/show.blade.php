@@ -48,14 +48,19 @@
             <div class="m-portlet__body">
                 <!--begin::Section-->
                 <div class="m-section">
-					<span class="m-section__sub">
-					</span>
+					{{--<span class="m-section__sub">--}}
+					{{--</span>--}}
                     <div class="m-section__content">
                         <table class="table">
+                            <thead>
+                            <th><strong>@lang('Text')</strong></th>
+                            <th><strong>@lang('Category')</strong></th>
+                            </thead>
                             <tbody>
                             @foreach($dataset->data()->orderBy('id')->limit(100)->get()->all() as $data)
                                 <tr>
                                     <td>{{ $data->text }}</th>
+                                    <td>{{ $data->label->text }}</th>
                                 </tr>
                             @endforeach
                             </tbody>

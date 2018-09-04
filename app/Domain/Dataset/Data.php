@@ -15,9 +15,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer dataset_id
  * @property integer label_id
  * @property string text
+ * @property Label label
  */
 class Data extends Model
 {
 
     protected $fillable = ['dataset_id', 'label_id', 'text'];
+
+    public function label()
+    {
+        return $this->belongsTo(Label::class);
+    }
 }
