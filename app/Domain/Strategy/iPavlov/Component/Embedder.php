@@ -61,7 +61,7 @@ class Embedder extends Component
     {
         return array_merge([
             'name' => self::name(),
-            'in' => ['xn'],
+            'in' => ['x'],
             'out' => ['xv'],
             'load_path' => [
                 'ft_compressed.pkl',

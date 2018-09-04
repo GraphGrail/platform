@@ -64,7 +64,7 @@ class StopWordsRemover extends Component
             'name' => self::name(),
             'id' => self::name(),
             'in' => ['x'],
-            'out' => ['xnr'],
+            'out' => ['x'],
         ], $params);
     }
 }

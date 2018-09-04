@@ -58,7 +58,7 @@ class TextNormalizer extends Component
             'name' => self::name(),
             'id' => self::name(),
             'in' => ['x'],
-            'out' => ['xn'],
+            'out' => ['x'],
         ], $this->createParams());
     }
 }
