@@ -40,7 +40,7 @@
                 <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
                         <h3 class="m-portlet__head-text">
-                            Labels
+                            @lang('Dataset') @lang('data')
                         </h3>
                     </div>
                 </div>
@@ -53,9 +53,9 @@
                     <div class="m-section__content">
                         <table class="table">
                             <tbody>
-                            @foreach($dataset->data()->orderBy('id')->limit(100)->get()->all() as $label)
+                            @foreach($dataset->data()->orderBy('id')->limit(100)->get()->all() as $data)
                                 <tr>
-                                    <td>{{ $label->text }}</th>
+                                    <td>{{ $data->text }}</th>
                                 </tr>
                             @endforeach
                             </tbody>
