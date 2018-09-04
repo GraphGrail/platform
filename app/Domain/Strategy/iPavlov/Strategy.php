@@ -138,7 +138,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
             $config = $this->createJsonConfiguration($model->configuration);
             $requestData = [
                 'dataset' => (new Storage())->getPath($dataset),
-                'language' => $dataset->lang,
+                'language' => $dataset->lang ?: 'ru',
                 'config' => $config,
             ];
 
