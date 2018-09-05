@@ -84,11 +84,11 @@ class ExtractDatasetData implements ShouldQueue
 
     protected function extractMessage($record)
     {
-        return array_shift($record);
+        return $record[1];
     }
 
     protected function extractLabelTree($record)
     {
-        return array_pop($record);
+        return $record[2];
     }
 }
