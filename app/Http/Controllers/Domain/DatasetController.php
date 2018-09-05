@@ -164,7 +164,7 @@ class DatasetController extends Controller
 
     public function download(Dataset $dataset)
     {
-        if ($dataset->user_id !== Auth::id()) {
+        if ($dataset->user_id && $dataset->user_id !== Auth::id()) {
             throw new RuntimeException('Dataset not found');
         }
         return $this->storage->getDisk()->download($dataset->file, $dataset->name);
