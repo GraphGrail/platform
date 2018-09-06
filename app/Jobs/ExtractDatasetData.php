@@ -87,8 +87,8 @@ class ExtractDatasetData implements ShouldQueue
         return $record[1];
     }
 
-    protected function extractLabelTree($record)
+    protected function extractLabelTree($record): string
     {
-        return $record[2];
+        return (string)$record[2];
     }
 }
