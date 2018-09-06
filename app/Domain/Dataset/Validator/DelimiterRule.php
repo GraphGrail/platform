@@ -34,7 +34,7 @@ class DelimiterRule implements Rule
         if (!$handle = fopen($path, 'rb')) {
             return false;
         }
-        $checkLines = 3;
+        $checkLines = 1;
 
         while ($checkLines && ($line = fgets($handle)) !== false) {
             if (false === strpos($line, ',')) {
