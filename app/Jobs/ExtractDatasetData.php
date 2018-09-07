@@ -56,6 +56,9 @@ class ExtractDatasetData implements ShouldQueue
             $text = $this->extractMessage($record);
             $category = $this->extractLabelTree($record);
             \Log::info(sprintf('dataset data: %s:%s', $category, $text));
+            if ('text' === $text && 'labels' === $category) { // Skip first caption line
+                continue; // TODO: Refactor this to setting when upload dataset
+            }
 
             $label = null;
             foreach ($existLabels as $existLabel) {
