@@ -1,0 +1,39 @@
+.educationBlock {
+  padding: 10px 20px;
+  max-width: 500px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  top: 50%;
+  position: absolute;
+  box-shadow: 0 0 15px 1px rgba(69, 65, 78, .2);
+  border-radius: 4px;
+  background-image: url('/images/misc/user_profile_bg.jpg');
+  background-size: cover;
+  color: #fff;
+
+  a.educationBlock-button {
+    float: right;
+    color: #000;
+    text-decoration: none;
+    padding: 10px 20px;
+    transition: background 0.2s;
+    background: #fff;
+    margin-top: 10px;
+    margin-left: 10px;
+    box-shadow: 0 0 15px 1px rgba(69, 65, 78, .2);
+  }
+
+  a.educationBlock-button:hover {
+    background: #F7F7F7 !important;
+    color: #000;
+  }
+
+  #select_first {
+    background-color: #a7e0a7;
+  }
+  #select_second {
+    background-color: #a7b9e0;
+  }
+}
+

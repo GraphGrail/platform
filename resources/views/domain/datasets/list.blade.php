@@ -39,6 +39,8 @@
     <!--end::Form-->
 </div>
 @section('scripts')
+    @parent
+
     <script language="javascript">
         function deleteDataset(id, name) {
             if (!confirm("@lang('Are you sure?')" + " " + "@lang('Delete')" + " " + name + "?")) {

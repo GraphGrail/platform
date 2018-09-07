@@ -21,6 +21,9 @@
 
     <script src="{{ asset('js/scripts.bundle.js') }}" defer></script>
     <script src="{{ asset('js/jquery-ui.min.js') }}" defer></script>
+    @if(\Illuminate\Support\Facades\Auth::user()->isNew)
+        <script src="{{ asset('js/education.js') }}" defer></script>
+    @endif
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">

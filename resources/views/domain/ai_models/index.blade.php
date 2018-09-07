@@ -68,6 +68,8 @@
     </div>
 @endsection
 @section('scripts')
+    @parent
+
     <script language="javascript">
         function deleteModel(id, name) {
             if (!confirm("@lang('Are you sure?')" + " " + "@lang('Delete')" + " " + name + "?")) {
@@ -84,4 +86,17 @@
                 });
         }
     </script>
+
+    @if(\Illuminate\Support\Facades\Auth::user()->isNew)
+        <script language="javascript">
+            $(document).ready(function () {
+                setTimeout(function () {
+                    window.showEducationBlock(
+                        "@lang('Here you can choose Ai models you trained previously. If you have no them - let\'s create new one!')",
+                        "{{ url('/ai-models/create') }}"
+                    );
+                }, 300);
+            });
+        </script>
+    @endif
 @endsection

@@ -173,6 +173,8 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
 
 @if($model->status == \App\Domain\AiModel::STATUS_TRAINING)
     @section('scripts')
+        @parent
+
         <script language="javascript">
             let checker = function() {
                 axios.get("{{ route('ai-models.status', ['model' => $model]) }}")

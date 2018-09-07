@@ -22,6 +22,7 @@ mix.copy('resources/assets/sass/ui.css', 'public/css/ui.css');
 
 mix.babel('resources/assets/js/scripts.bundle.js', 'public/js/scripts.bundle.js');
 mix.babel('resources/assets/js/ui.js', 'public/js/ui.js');
+mix.babel('resources/assets/js/education.js', 'public/js/education.js');
 
 mix.copyDirectory('resources/assets/images', 'public/images');
 mix.copyDirectory('resources/assets/theme/dist/default/assets/', 'public/assets');

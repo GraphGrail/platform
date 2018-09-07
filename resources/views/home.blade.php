@@ -83,3 +83,20 @@
 </div>
 
 @endsection
+
+@section('scripts')
+    @parent
+
+    @if(\Illuminate\Support\Facades\Auth::user()->isNew)
+        <script language="javascript">
+            $(document).ready(function () {
+                setTimeout(function () {
+                    window.showEducationBlock(
+                        "@lang('Welcome. GraphGrailAi Platform allows you to create you own Ai application. For this you only need upload your text data and teach your neural network in a few clicks of mouse. After you are done, test your App pasting text example in form and pres Process. Also, you can integrate ready-made API in your business-process!')",
+                        "{{ url('/datasets') }}"
+                    );
+                }, 300);
+            });
+        </script>
+    @endif
+@endsection

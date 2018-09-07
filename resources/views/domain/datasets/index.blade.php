@@ -35,3 +35,20 @@
         @include('domain.datasets.list', ['datasets' => $datasets])
     </div>
 @endsection
+
+@section('scripts')
+    @parent
+
+    @if(\Illuminate\Support\Facades\Auth::user()->isNew)
+        <script language="javascript">
+            $(document).ready(function () {
+                setTimeout(function () {
+                    window.showEducationBlock(
+                        "@lang('Hi, here you can choose demo dataset or upload your own.')",
+                        "{{ url('/ai-models') }}"
+                    );
+                }, 300);
+            });
+        </script>
+    @endif
+@endsection

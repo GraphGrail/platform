@@ -44,9 +44,13 @@ if ($model->configuration) {
 @extends('layouts.app')
 
 @section('styles')
+    @parent
+
     <link href="{{ asset('css/ui.css') }}" rel="stylesheet">
 @endsection
 @section('scripts')
+    @parent
+
     <script src="{{ asset('js/ui.js') }}" defer></script>
 @endsection
 
@@ -153,4 +157,20 @@ if ($model->configuration) {
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    @parent
+
+    @if(\Illuminate\Support\Facades\Auth::user()->isNew)
+        <script language="javascript">
+            $(document).ready(function () {
+                setTimeout(function () {
+                    window.showEducationBlock(
+                        "@lang('This section for Ai neural network training. You can use drag-n-drop interface to choose Ai Components from left palette and then adjust their settings in right palette.')"
+                    );
+                }, 500);
+            });
+        </script>
+    @endif
 @endsection

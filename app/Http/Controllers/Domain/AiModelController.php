@@ -9,6 +9,7 @@ use App\Domain\Dataset\Dataset;
 use App\Domain\Strategy\Strategy;
 use App\Domain\Strategy\StrategyProvider;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -39,7 +40,12 @@ class AiModelController extends Controller
      */
     public function create(StrategyProvider $provider, Request $request)
     {
-        if ($strategy = $request->get('strategy')) {
+
+        /** @var User $user */
+        $user = Auth::user();
+        $strategy = $user->isNew ? \App\Domain\Strategy\iPavlov\Strategy::class : null;
+
+        if ($strategy = $strategy ?? $request->get('strategy')) {
             /** @var Strategy $strategy */
             $strategy = $provider->get($strategy);
 
@@ -84,6 +90,13 @@ class AiModelController extends Controller
             'status' => AiModel::STATUS_NEW,
         ]);
         $this->fillModel($request, $model);
+
+        /** @var User $user */
+        $user = Auth::user();
+        if ($user->isNew) {
+            $user->isNew = false;
+            $user->save();
+        }
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
