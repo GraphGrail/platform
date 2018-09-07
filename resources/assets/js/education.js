@@ -1,15 +1,9 @@
 window.showEducationBlock =
 
-    function (text, url) {
-        let button = '';
-
+    function (url) {
         if (url) {
-            button =  '<a class="educationBlock-button" href="' + url + '">Next</a>'
-        } else {
-            button =  '<a id="select_second" class="educationBlock-button">Toxic comments dataset</a><a class="educationBlock-button" id="select_first">IMDB dataset</a>'
+            $('#modalNextButton').attr.href.val(url)
         }
-
-        $('body').append('<div class="educationBlock"><p>' + text + '</p>' + button + '</div>');
 
         $('.educationBlock-button').click(function() {
             let imdb = null;
@@ -23,13 +17,19 @@ window.showEducationBlock =
                     toxic = $(this);
                 }
             });
-            if ($(this).attr('id') === 'select_first') {
+            if ($(this).attr('id') === 'select_second') {
                 $('#dataset').val(imdb.val());
                 $('#name').val(imdb.html());
             } else {
                 $('#dataset').val(toxic.val());
                 $('#name').val(toxic.html());
             }
-            $('.educationBlock').hide();
+
+            $('#educationModal').modal('hide');
         });
     };
+
+$('#educationModal').modal({
+    backdrop: 'static',
+    keyboard: false
+});

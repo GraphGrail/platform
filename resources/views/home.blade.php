@@ -81,6 +81,19 @@
         <!--end::Form-->
     </div>
 </div>
+<div class="modal fade" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4>@lang('Welcome. GraphGrailAi Platform allows you to create you own Ai application. For this you only need upload your text data and teach your neural network in a few clicks of mouse. After you are done, test your App pasting text example in form and pres Process. Also, you can integrate ready-made API in your business-process!')</h4>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url('/datasets') }}"  id="modalNextButton" class="btn btn-primary">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -91,10 +104,7 @@
         <script language="javascript">
             $(document).ready(function () {
                 setTimeout(function () {
-                    window.showEducationBlock(
-                        "@lang('Welcome. GraphGrailAi Platform allows you to create you own Ai application. For this you only need upload your text data and teach your neural network in a few clicks of mouse. After you are done, test your App pasting text example in form and pres Process. Also, you can integrate ready-made API in your business-process!')",
-                        "{{ url('/datasets') }}"
-                    );
+                    window.showEducationBlock();
                 }, 300);
             });
         </script>

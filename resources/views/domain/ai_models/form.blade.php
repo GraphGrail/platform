@@ -157,6 +157,28 @@ if ($model->configuration) {
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4>@lang('This section for Ai neural network training. You can use drag-n-drop interface to choose Ai Components from left palette and then adjust their settings in right palette.')</h4>
+                </div>
+                <div class="modal-footer">
+                    <div id="select_first" class="educationBlock-button">
+                        <h5>Toxic comments dataset</h5>
+                        <p>Dataset with large number of Wikipedia comments which have been labeled by human raters for toxic behavior</p>
+                    </div>
+                    <div id="select_second" class="educationBlock-button">
+                        <h5>IMDB dataset</h5>
+                        <p>IMDB movie reviews dataset for Sentiment Analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @section('scripts')
@@ -166,9 +188,7 @@ if ($model->configuration) {
         <script language="javascript">
             $(document).ready(function () {
                 setTimeout(function () {
-                    window.showEducationBlock(
-                        "@lang('This section for Ai neural network training. You can use drag-n-drop interface to choose Ai Components from left palette and then adjust their settings in right palette.')"
-                    );
+                    window.showEducationBlock();
                 }, 500);
             });
         </script>

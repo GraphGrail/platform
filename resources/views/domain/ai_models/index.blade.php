@@ -66,6 +66,19 @@
             <!--end::Form-->
         </div>
     </div>
+    <div class="modal fade" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4>@lang('Here you can choose Ai models you trained previously. If you have no them - let\'s create new one!')</h4>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ url('/ai-models/create') }}" id="modalNextButton" class="btn btn-primary">Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @section('scripts')
     @parent
@@ -91,10 +104,7 @@
         <script language="javascript">
             $(document).ready(function () {
                 setTimeout(function () {
-                    window.showEducationBlock(
-                        "@lang('Here you can choose Ai models you trained previously. If you have no them - let\'s create new one!')",
-                        "{{ url('/ai-models/create') }}"
-                    );
+                    window.showEducationBlock();
                 }, 300);
             });
         </script>
