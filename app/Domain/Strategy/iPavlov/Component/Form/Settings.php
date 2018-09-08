@@ -24,6 +24,6 @@ class Settings extends ComponentForm
 
     protected function getEpochs()
     {
-        return \Form::number($this->createName('epochs'), $this->component->epochs ?? 3, ['class' => $this->class]);
+        return \Form::number($this->createName('epochs'), $this->component->epochs ?? 25, ['class' => $this->class]);
     }
 }

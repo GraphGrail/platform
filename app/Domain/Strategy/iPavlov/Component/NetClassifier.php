@@ -147,7 +147,7 @@ class NetClassifier extends Component
                 'new2old' => 'new2old.pkl',
             ]),
             'classes' => 'class_names.pkl',
-            'confident_threshold' => 0.14999999999999999,
+            'confident_threshold' => 0.5,
             'save_path' => 'cnn_weights.hdf',
             'load_path' => 'cnn_weights.hdf5',
         ];

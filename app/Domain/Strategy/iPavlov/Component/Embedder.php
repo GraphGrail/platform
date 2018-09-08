@@ -67,8 +67,8 @@ class Embedder extends Component
                 'ft_compressed.pkl',
                 'ft_compressed_local.pkl',
             ],
-            'emb_dim' => 15,
-            'emb_len' => 25,
+            'emb_dim' => 300,
+            'emb_len' => 50,
         ], $this->createParams());
     }
 }

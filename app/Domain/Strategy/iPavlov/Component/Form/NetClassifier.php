@@ -184,17 +184,17 @@ class NetClassifier extends ComponentForm
 
     protected function get_emb_dim()
     {
-        return \Form::number($this->createName('emb_dim'), $this->component->emb_dim ?? 25, ['class' => $this->class]);
+        return \Form::number($this->createName('emb_dim'), $this->component->emb_dim ?? 50, ['class' => $this->class]);
     }
 
     protected function get_seq_len()
     {
-        return \Form::number($this->createName('seq_len'), $this->component->seq_len ?? 50, ['class' => $this->class]);
+        return \Form::number($this->createName('seq_len'), $this->component->seq_len ?? 300, ['class' => $this->class]);
     }
 
     protected function get_pool_size()
     {
-        return \Form::number($this->createName('pool_size'), $this->component->pool_size ?? 4, ['class' => $this->class]);
+        return \Form::number($this->createName('pool_size'), $this->component->pool_size ?? 2, ['class' => $this->class]);
     }
 
     protected function get_dropout_power()

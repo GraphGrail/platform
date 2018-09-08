@@ -434,7 +434,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
                         [
                             'classification_f1',
                         ],
-                    'val_every_n_epochs' => 1,
+                    'val_every_n_epochs' => 25,
                     'log_every_n_epochs' => 1,
                     'tensorboard_log_dir' => 'logs/',
                 ]),
