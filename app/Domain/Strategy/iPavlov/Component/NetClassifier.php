@@ -141,8 +141,8 @@ class NetClassifier extends Component
             'optimizer' => $this->optimizer,
             'architecture_params' => array_merge($this->createLayers($this->architecture),[
                 'emb_dim' => (float)$this->emb_dim,
-                'seq_len' => 15, //(float)$this->seq_len,
-                'pool_size' => 2, //(float)$this->pool_size,
+                'seq_len' => 300, # (float)$this->seq_len,
+                'pool_size' => 2, # (float)$this->pool_size,
                 'dropout_power' => (float)$this->dropout_power,
                 'new2old' => 'new2old.pkl',
             ]),
