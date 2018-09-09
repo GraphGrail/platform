@@ -132,16 +132,17 @@ class NetClassifier extends ComponentForm
         $layers = [
             [
                 'layers_arch' => 'bilstm_layers',
-                'layers_units' => 64,
+                'layers_units' => 16,
                 'layers_activation' => 'relu',
                 'layers_kernel_size' => 0,
             ],
             [
                 'layers_arch' => 'conv_layers',
-                'layers_units' => 128,
-                'layers_kernel_size' => 1,
+                'layers_units' => 64,
+                'layers_kernel_size' => 2,
                 'layers_activation' => 'relu',
             ],
+ /*
             [
                 'layers_arch' => 'conv_layers',
                 'layers_units' => 32,
@@ -154,6 +155,7 @@ class NetClassifier extends ComponentForm
                 'layers_kernel_size' => 3,
                 'layers_activation' => 'relu',
             ],
+ */
         ];
         foreach ($layers as $index => $data) {
             $result[] = implode('', $this->createLayer($data, $index === (\count($layers) - 1)));
@@ -204,7 +206,7 @@ class NetClassifier extends ComponentForm
 
     protected function get_l2_power()
     {
-        return \Form::number($this->createName('l2_power'), $this->component->l2_power ?? 1e-4, ['class' => $this->class]);
+        return \Form::number($this->createName('l2_power'), $this->component->l2_power ?? 1e-2, ['class' => $this->class]);
     }
 
     protected function get_n_classes()
