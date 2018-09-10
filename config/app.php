@@ -164,6 +164,7 @@ return [
         App\Providers\StrategyServiceProvider::class,
         App\Providers\FormServiceProvider::class,
 
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*
