@@ -24,7 +24,7 @@ class ExtractDatasetData implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param Dataset $dataset
      */
     public function __construct(Dataset $dataset)
     {
@@ -37,7 +37,7 @@ class ExtractDatasetData implements ShouldQueue
      * @return void
      * @throws \League\Csv\Exception
      */
-    public function handle()
+    public function handle(): void
     {
         $storage = new Storage();
 
@@ -52,12 +52,13 @@ class ExtractDatasetData implements ShouldQueue
         $reader->setDelimiter(',');
 
         $records = $reader->getRecords();
+        $first = true;
         foreach ($records as $offset => $record) {
             $text = $this->extractMessage($record);
             $category = $this->extractLabelTree($record);
             \Log::info(sprintf('dataset data: %s:%s', $category, $text));
-            if ('text' === $text && 'labels' === $category) { // Skip first caption line
-                continue; // TODO: Refactor this to setting when upload dataset
+            if ($first && $this->dataset->exclude_first_row) {
+                continue;
             }
 
             $label = null;
@@ -73,6 +74,7 @@ class ExtractDatasetData implements ShouldQueue
             }
             $data = new Data(['text' => $text, 'label_id' => $label->id]);
             $this->dataset->data()->save($data);
+            $first = false;
         }
         $this->dataset->status = Dataset::STATUS_READY;
         $this->dataset->save();

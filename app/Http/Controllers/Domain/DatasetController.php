@@ -60,11 +60,12 @@ class DatasetController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = \Validator::make(
-            $request->query(),
+            $request->all(),
             [
                 'dataset' => 'required|file|mimes:csv,txt',
                 'name' => 'required|string|max:255',
                 'lang' => 'required|string|max:2',
+                'exclude_first_row' => 'boolean',
             ]
         )->validate();
 
@@ -81,6 +82,7 @@ class DatasetController extends Controller
                 'lang' => $data['lang'],
                 'user_id' => $userId,
                 'status' => Dataset::STATUS_NEW,
+                'exclude_first_row' => (bool)$data['exclude_first_row'],
             ]
         );
 

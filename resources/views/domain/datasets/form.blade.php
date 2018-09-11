@@ -21,9 +21,7 @@ $langs = [
     <div class="m-subheader ">
         <div class="d-flex align-items-center">
             <div class="mr-auto">
-                <h1 class="m-subheader__title">
-                    <h3>Upload dataset .csv-file</h3>
-                </h1>
+                <h3>Upload dataset .csv-file</h3>
             </div>
         </div>
     </div>
@@ -49,8 +47,8 @@ $langs = [
             ]); !!}
             @method($method)
                 <div class="m-portlet__body">
-                    <div class="form-group m-form__group m--margin-top-10">
-                        @if ($errors->any())
+                    @if ($errors->any())
+                        <div class="form-group m-form__group m--margin-top-10">
                             @foreach ($errors->all() as $error)
                                 <div class="alert alert-danger alert-dismissible fade show   m-alert m-alert--air" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -58,26 +56,30 @@ $langs = [
                                     {{ $error }}
                                 </div>
                             @endforeach
-                        @endif
+                        </div>
+                    @endif
 
-                    </div>
                     <div class="form-group m-form__group">
                         {{ \Form::label('name', __('Name')) }}
                         {{ \Form::text('name', $dataset->name ?? '', ['class' => 'form-control m-input m-input--air']) }}
                     </div>
                     <div class="form-group m-form__group">
-                        {{ \Form::label('name', __('Name')) }}
+                        {{ \Form::label('lang', __('Language')) }}
                         {{ \Form::select('lang', $langs, $dataset->lang ?? 'ru', ['class' => 'form-control m-input m-input--air']) }}
                     </div>
                     @if(!$dataset->file)
                         <div class="form-group m-form__group">
-                            <label>File</label>
+                            <label>{{__('File')}}</label>
                             <div class="custom-file">
                                 {!! Form::file('dataset', ['class' => 'custom-file-input']); !!}
-                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                <label class="custom-file-label" for="customFile">{{__('Choose file')}}</label>
                             </div>
                         </div>
                     @endif
+                    <div class="form-group m-form__group">
+                        {{ \Form::checkbox('exclude_first_row', 1, $dataset->exclude_first_row, ['id' => 'exclude_first_row']) }}
+                        {{ \Form::label('exclude_first_row', __('Exclude first row')) }}
+                    </div>
                 </div>
                 <div class="m-portlet__foot m-portlet__foot--fit">
                     <div class="m-form__actions">
