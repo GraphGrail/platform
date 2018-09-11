@@ -9,11 +9,14 @@ use App\Domain\Dataset\Validator\DelimiterRule;
 use App\Http\Controllers\Controller;
 use App\Jobs\ExtractDatasetData;
 use http\Exception\RuntimeException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class DatasetController extends Controller
@@ -27,10 +30,9 @@ class DatasetController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $datasets = Dataset::query()->where(['user_id' => Auth::id()])->get()->all();
         $system = Dataset::query()->where(['user_id' => 0])->get()->all();
@@ -41,9 +43,9 @@ class DatasetController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('domain/datasets/form', ['dataset' => new Dataset(['user_id' => Auth::id()])]);
     }
@@ -51,30 +53,36 @@ class DatasetController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @return RedirectResponse
      * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
+        $data = \Validator::make(
+            $request->query(),
+            [
+                'dataset' => 'required|file|mimes:csv,txt',
+                'name' => 'required|string|max:255',
+                'lang' => 'required|string|max:2',
+            ]
+        )->validate();
+
         $userId = $request->user()->id;
-        $request->validate([
-            'dataset' => 'required|file|mimes:csv,txt',
-            'name' => 'required|string|max:255',
-            'lang' => 'required|string|max:2',
-        ]);
-        if (!$path = $request->file('dataset')->store(
-            $userId, $this->storage->getDiskName()
-        )) {
+        $file = $request->file('dataset');
+        if (!$path = $file->store($userId, $this->storage->getDiskName())) {
             throw new RuntimeException('File not saved');
         }
-        $dataset = new Dataset([
-            'file' => $path,
-            'name' => $request->get('name'),
-            'lang' => $request->get('lang'),
-            'user_id' => $userId,
-            'status' => Dataset::STATUS_NEW,
-        ]);
+
+        $dataset = new Dataset(
+            [
+                'file' => $path,
+                'name' => $data['name'],
+                'lang' => $data['lang'],
+                'user_id' => $userId,
+                'status' => Dataset::STATUS_NEW,
+            ]
+        );
 
         try {
             $this->validateDataset($dataset);
@@ -99,10 +107,10 @@ class DatasetController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Domain\Dataset\Dataset  $dataset
-     * @return \Illuminate\Http\Response
+     * @param Dataset $dataset
+     * @return View
      */
-    public function show(Dataset $dataset)
+    public function show(Dataset $dataset): View
     {
         return view('domain/datasets/show', ['dataset' => $dataset]);
     }
@@ -110,10 +118,10 @@ class DatasetController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Domain\Dataset\Dataset  $dataset
-     * @return \Illuminate\Http\Response
+     * @param Dataset $dataset
+     * @return View
      */
-    public function edit(Dataset $dataset)
+    public function edit(Dataset $dataset): View
     {
         return view('domain/datasets/form', ['dataset' => $dataset]);
     }
@@ -121,20 +129,24 @@ class DatasetController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Domain\Dataset\Dataset $dataset
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @param  Dataset $dataset
+     * @return RedirectResponse
+     * @throws ValidationException
      */
-    public function update(Request $request, Dataset $dataset)
+    public function update(Request $request, Dataset $dataset): RedirectResponse
     {
         $userId = $request->user()->id;
-        if ($dataset->user_id != $userId) {
+        if ($dataset->user_id !== $userId) {
             throw new AccessDeniedHttpException('Dataset belong to another user');
         }
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'lang' => 'required|string|max:2',
-        ]);
+        \Validator::make(
+            $request->query(),
+            [
+                'name' => 'required|string|max:255',
+                'lang' => 'required|string|max:2',
+            ]
+        )->validate();
 
         $dataset->name = $request->get('name');
         $dataset->lang = $request->get('lang');
@@ -146,31 +158,35 @@ class DatasetController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Domain\Dataset\Dataset $dataset
+     * @param  Dataset $dataset
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Dataset $dataset)
+    public function destroy(Dataset $dataset): \Illuminate\Http\Response
     {
-        if ($dataset->user_id != Auth::id()) {
+        if ($dataset->user_id !== Auth::id()) {
             return Response::make();
         }
 
-        $this->storage->getDisk()->delete($dataset->file);
+        \Storage::disk()->delete($dataset->file);
         $dataset->delete();
 
         return Response::make();
     }
 
-    public function download(Dataset $dataset)
+    public function download(Dataset $dataset): StreamedResponse
     {
         if ($dataset->user_id && $dataset->user_id !== Auth::id()) {
             throw new RuntimeException('Dataset not found');
         }
-        return $this->storage->getDisk()->download($dataset->file, $dataset->name);
+        return \Storage::disk()->download($dataset->file, $dataset->name);
     }
 
-    private function validateDataset(Dataset $dataset)
+    /**
+     * @param Dataset $dataset
+     * @throws ValidationException
+     */
+    private function validateDataset(Dataset $dataset): void
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = \Validator::make(['dataset' => $dataset], ['dataset' => new DelimiterRule()]);
