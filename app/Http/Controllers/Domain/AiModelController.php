@@ -300,8 +300,8 @@ class AiModelController extends Controller
         return $this;
     }
 
-    public function status(AiModel $model): int
+    public function status(AiModel $model): array
     {
-        return $model->status;
+        return $model->toArray();
     }
 }

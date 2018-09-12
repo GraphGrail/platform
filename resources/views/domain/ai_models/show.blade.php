@@ -47,9 +47,11 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
             <div class="mr-auto">
                 <h1 class="m-subheader__title">
                     Ai Model: {{ $model->getFullName() }}. {{ $model->statusLabel() }}.
+                    <span class="ai-models__performance-js">
                     @if($model->performance)
                         Quality {{ $model->performance }}%
                     @endif
+                    </span>
                 </h1>
             </div>
             @if ($model->dataset)
@@ -182,7 +184,12 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
                         if (!response.data) {
                             return;
                         }
-                        if (response.data == "{{ \App\Domain\AiModel::STATUS_TRAINING }}") {
+
+                        if (response.data.performance) {
+                            $('.ai-models__performance-js').text('Quality :performance%'.replace(':performance', response.data.performance));
+                        }
+
+                        if (response.data.status == "{{ \App\Domain\AiModel::STATUS_TRAINING }}") {
                             return;
                         }
                         window.location.reload();
