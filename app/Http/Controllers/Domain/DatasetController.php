@@ -66,6 +66,7 @@ class DatasetController extends Controller
                 'name' => 'required|string|max:255',
                 'lang' => 'required|string|max:2',
                 'exclude_first_row' => 'boolean',
+                'delimiter' => 'required|string|max:1',
             ]
         )->validate();
 
@@ -83,6 +84,7 @@ class DatasetController extends Controller
                 'user_id' => $userId,
                 'status' => Dataset::STATUS_NEW,
                 'exclude_first_row' => (bool)$data['exclude_first_row'],
+                'delimiter' => $data['delimiter'],
             ]
         );
 
@@ -143,7 +145,7 @@ class DatasetController extends Controller
             throw new AccessDeniedHttpException('Dataset belong to another user');
         }
         \Validator::make(
-            $request->query(),
+            $request->all(),
             [
                 'name' => 'required|string|max:255',
                 'lang' => 'required|string|max:2',
@@ -191,7 +193,7 @@ class DatasetController extends Controller
     private function validateDataset(Dataset $dataset): void
     {
         /** @var \Illuminate\Validation\Validator $validator */
-        $validator = \Validator::make(['dataset' => $dataset], ['dataset' => new DelimiterRule()]);
+        $validator = \Validator::make(['dataset' => $dataset], ['dataset' => new DelimiterRule($dataset->delimiter)]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);

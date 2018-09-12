@@ -67,6 +67,10 @@ $langs = [
                         {{ \Form::label('lang', __('Language')) }}
                         {{ \Form::select('lang', $langs, $dataset->lang ?? 'ru', ['class' => 'form-control m-input m-input--air']) }}
                     </div>
+                    <div class="form-group m-form__group">
+                        {{ \Form::label('delimiter', __('Delimiter')) }}
+                        {{ \Form::text('delimiter', $dataset->delimiter?:',', ['class' => 'form-control m-input m-input--air', 'maxlength' => 1]) }}
+                    </div>
                     @if(!$dataset->file)
                         <div class="form-group m-form__group">
                             <label>{{__('File')}}</label>

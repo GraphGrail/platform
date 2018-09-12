@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Data[] data
  * @property LabelGroup labelGroup
  * @property boolean $exclude_first_row
+ * @property string $delimiter
  */
 class Dataset extends Model
 {
@@ -30,7 +31,7 @@ class Dataset extends Model
     public const STATUS_FILLING = 200;
     public const STATUS_READY = 300;
 
-    protected $fillable = ['user_id', 'file', 'name', 'lang', 'label_group_id', 'status', 'exclude_first_row'];
+    protected $fillable = ['user_id', 'file', 'name', 'lang', 'label_group_id', 'status', 'exclude_first_row', 'delimiter'];
 
     public function data(): HasMany
     {

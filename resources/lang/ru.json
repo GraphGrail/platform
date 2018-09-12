@@ -27,6 +27,7 @@
   "File": "Файл",
   "Choose file": "Выбрать файл",
   "Exclude first row": "Исключить первую строку",
+  "Delimiter": "Разделитель",
   "Classes": "Классы",
   "Customize Solution": "Настройка решения",
   "Component Palette": "Палитра компонентов",
@@ -59,5 +60,6 @@
   "Choose normalizer method: lemmatization or stemming (depends mostly on language, read more at https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.htm":"Способ приведения слов к нормальной форме: лемматизация - приведение к инфинитиву, стемминг - отбрасывание окончаний",
   "Tokenizer algorithm": "Алгоритм разбиения текста на токены",
   "Choose Feature Engineering type. Use default settings if you are unfamiliar with it.": "Преобразователь текста в признаковое пространство, т.е. в вид, приемлемый для обработки AI алгоритмом",
-  "Neural network classification.  Accept Features and predict category for given text. Also measure accuracy and confidence level": "Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности."
+  "Neural network classification.  Accept Features and predict category for given text. Also measure accuracy and confidence level": "Нейросетевой классификатор. Получает на вход векторное представление текста, возвращая предсказанную метку (метки) класса и уровень уверенности.",
+  "Dataset must have delimiter as \":delimiter\"": "Датасет должен иметь разделитель \":delimiter\""
 }
