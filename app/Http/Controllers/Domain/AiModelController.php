@@ -6,26 +6,27 @@ use App\Domain\AiModel;
 use App\Domain\Component;
 use App\Domain\Configuration;
 use App\Domain\Dataset\Dataset;
+use App\Domain\Exception\ConfigurationException;
 use App\Domain\Strategy\Strategy;
 use App\Domain\Strategy\StrategyProvider;
 use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use RuntimeException;
 
 class AiModelController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $models = AiModel::query()->where(['user_id' => Auth::id()])->get()->all();
         return view('domain/ai_models/index', ['models' => $models]);
@@ -36,9 +37,9 @@ class AiModelController extends Controller
      *
      * @param StrategyProvider $provider
      * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|View
      */
-    public function create(StrategyProvider $provider, Request $request)
+    public function create(StrategyProvider $provider, Request $request): View
     {
 
         /** @var User $user */
@@ -75,16 +76,20 @@ class AiModelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @return RedirectResponse
      * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'strategy' => 'required',
-            'name' => 'required|string|max:255',
-        ]);
+        \Validator::make(
+            $request->all(),
+            [
+                'strategy' => 'required',
+                'name' => 'required|string|max:255',
+            ]
+        )->validate();
+
         $model = new AiModel([
             'user_id' => Auth::id(),
             'status' => AiModel::STATUS_NEW,
@@ -104,10 +109,10 @@ class AiModelController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Domain\AiModel  $model
-     * @return \Illuminate\Http\Response
+     * @param  AiModel $model
+     * @return View
      */
-    public function show(AiModel $model)
+    public function show(AiModel $model): View
     {
         return view('domain/ai_models/show', ['model' => $model]);
     }
@@ -115,11 +120,11 @@ class AiModelController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Domain\AiModel $model
-     * @return \Illuminate\Http\Response
-     * @throws \App\Domain\Exception\ConfigurationException
+     * @param  AiModel $model
+     * @return View
+     * @throws ConfigurationException
      */
-    public function edit(AiModel $model)
+    public function edit(AiModel $model): View
     {
         return view('domain/ai_models/form', [
                 'model' => $model,
@@ -132,17 +137,21 @@ class AiModelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Domain\AiModel $model
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @param  AiModel $model
+     * @return RedirectResponse
      * @throws ValidationException
      */
-    public function update(Request $request, AiModel $model)
+    public function update(Request $request, AiModel $model): RedirectResponse
     {
-        $request->validate([
-            'strategy' => 'required',
-            'name' => 'required|string|max:255',
-        ]);
+        \Validator::make(
+            $request->all(),
+            [
+                'strategy' => 'required',
+                'name' => 'required|string|max:255',
+            ]
+        )->validate();
+
         $this->fillModel($request, $model);
 
         return Redirect::to(\url('ai-models', ['model' => $model]));
@@ -151,10 +160,10 @@ class AiModelController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Domain\AiModel  $model
+     * @param  AiModel  $model
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AiModel $model)
+    public function destroy(AiModel $model): \Illuminate\Http\Response
     {
         try {
             if ($model->configuration) {
@@ -167,7 +176,13 @@ class AiModelController extends Controller
         return Response::make();
     }
 
-    public function train(AiModel $model, Request $request)
+    /**
+     * @param AiModel $model
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws ConfigurationException
+     */
+    public function train(AiModel $model, Request $request): RedirectResponse
     {
         if (!$strategy = $model->configuration->strategy()) {
             throw new RuntimeException('Strategy not set');
@@ -183,7 +198,12 @@ class AiModelController extends Controller
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 
-    public function stop(AiModel $model)
+    /**
+     * @param AiModel $model
+     * @return RedirectResponse
+     * @throws ConfigurationException
+     */
+    public function stop(AiModel $model): RedirectResponse
     {
         if (!$strategy = $model->configuration->strategy()) {
             throw new RuntimeException('Strategy not set');
@@ -195,7 +215,14 @@ class AiModelController extends Controller
         return Redirect::to(\url('ai-models', ['model' => $model]));
     }
 
-    public function exec(AiModel $model, Request $request)
+    /**
+     * @param AiModel $model
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|View
+     * @throws ConfigurationException
+     * @throws ValidationException
+     */
+    public function exec(AiModel $model, Request $request): View
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = \Validator::make($model->toArray(), [
@@ -273,7 +300,7 @@ class AiModelController extends Controller
         return $this;
     }
 
-    public function status(AiModel $model)
+    public function status(AiModel $model): int
     {
         return $model->status;
     }
