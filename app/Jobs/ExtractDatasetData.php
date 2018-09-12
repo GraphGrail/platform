@@ -49,17 +49,13 @@ class ExtractDatasetData implements ShouldQueue
         $existLabels = $group->labels;
 
         $reader = Reader::createFromPath($storage->getPath($this->dataset), 'r');
-        $reader->setDelimiter(',');
+        $reader->setDelimiter($this->dataset->delimiter);
+        $reader->setHeaderOffset($this->dataset->exclude_first_row ? 1 : 0);
 
         $records = $reader->getRecords();
-        $first = true;
         foreach ($records as $offset => $record) {
             $text = $this->extractMessage($record);
             $category = $this->extractLabelTree($record);
-            \Log::info(sprintf('dataset data: %s:%s', $category, $text));
-            if ($first && $this->dataset->exclude_first_row) {
-                continue;
-            }
 
             $label = null;
             foreach ($existLabels as $existLabel) {
@@ -74,7 +70,6 @@ class ExtractDatasetData implements ShouldQueue
             }
             $data = new Data(['text' => $text, 'label_id' => $label->id]);
             $this->dataset->data()->save($data);
-            $first = false;
         }
         $this->dataset->status = Dataset::STATUS_READY;
         $this->dataset->save();
