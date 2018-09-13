@@ -11,10 +11,22 @@
     <!-- BEGIN: Subheader -->
     <div class="m-subheader ">
         <div class="d-flex align-items-center">
-            <div class="mr-auto">
+            <div class="mr-auto relative">
                 <h1 class="m-subheader__title">
                     {{ __('Ai Models') }} <a href="{{ route('ai-models.create') }}" class="btn m-btn--pill m-btn--air btn-primary">+{{ __('Add') }}</a>
                 </h1>
+                <div class="modal fade absolute-modal" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content modal-triangle-left">
+                                <div class="modal-body">
+                                    <h4>@lang('Here you can choose Ai models you trained previously. If you have no them - let\'s create new one!')</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ url('/ai-models/create') }}" id="modalNextButton" class="btn btn-primary">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -64,18 +76,6 @@
                 <!--end::Section-->
             </div>
             <!--end::Form-->
-        </div>
-    </div>
-    <div class="modal fade" id="educationModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h4>@lang('Here you can choose Ai models you trained previously. If you have no them - let\'s create new one!')</h4>
-                </div>
-                <div class="modal-footer">
-                    <a href="{{ url('/ai-models/create') }}" id="modalNextButton" class="btn btn-primary">Next</a>
-                </div>
-            </div>
         </div>
     </div>
 
