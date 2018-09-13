@@ -47,7 +47,7 @@ class DatasetController extends Controller
      */
     public function create(): View
     {
-        return view('domain/datasets/form', ['dataset' => new Dataset(['user_id' => Auth::id()])]);
+        return view('domain/datasets/create', ['dataset' => new Dataset(['user_id' => Auth::id()])]);
     }
 
     /**
@@ -127,7 +127,7 @@ class DatasetController extends Controller
      */
     public function edit(Dataset $dataset): View
     {
-        return view('domain/datasets/form', ['dataset' => $dataset]);
+        return view('domain/datasets/edit', ['dataset' => $dataset]);
     }
 
     /**
@@ -144,7 +144,7 @@ class DatasetController extends Controller
         if ($dataset->user_id !== $userId) {
             throw new AccessDeniedHttpException('Dataset belong to another user');
         }
-        \Validator::make(
+        $data = \Validator::make(
             $request->all(),
             [
                 'name' => 'required|string|max:255',
@@ -152,8 +152,8 @@ class DatasetController extends Controller
             ]
         )->validate();
 
-        $dataset->name = $request->get('name');
-        $dataset->lang = $request->get('lang');
+        $dataset->name = $data['name'];
+        $dataset->lang = $data['lang'];
         $dataset->save();
 
         return Redirect::to('/datasets/' . $dataset->id);
