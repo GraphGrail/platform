@@ -62,9 +62,6 @@ class StopWordsRemover extends Component
 
         return array_merge([
             'name' => self::name(),
-            'id' => self::name(),
-            'in' => ['x'],
-            'out' => ['x'],
         ], $params);
     }
 }

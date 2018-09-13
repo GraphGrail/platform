@@ -56,9 +56,6 @@ class TextNormalizer extends Component
     {
         return array_merge([
             'name' => self::name(),
-            'id' => self::name(),
-            'in' => ['x'],
-            'out' => ['x'],
         ], $this->createParams());
     }
 }

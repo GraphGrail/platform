@@ -184,6 +184,11 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
+    /**
+     * @param AiModel $model
+     * @return \App\Domain\Strategy\Strategy
+     * @throws ValidationException
+     */
     public function stop(AiModel $model): \App\Domain\Strategy\Strategy
     {
         $errors = [];
@@ -220,6 +225,11 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return $this;
     }
 
+    /**
+     * @param AiModel $model
+     * @return \App\Domain\Strategy\Strategy
+     * @throws ValidationException
+     */
     public function status(AiModel $model): \App\Domain\Strategy\Strategy
     {
         $errors = [];
@@ -269,6 +279,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
      * @param AiModel $model
      * @param null $data
      * @return Result
+     * @throws ValidationException
      * @throws \App\Domain\Exception\ConfigurationException
      */
     public function exec(AiModel $model, $data = null): Result
@@ -366,84 +377,49 @@ class Strategy extends \App\Domain\Strategy\Strategy
      */
     protected function createJsonConfiguration(Configuration $configuration): array
     {
-        $pipe = [];
-        $settings = [];
+        $config = config('aimodels-configuration.iPavlov');
+        $pipes = [];
+
         foreach ($configuration->components() as $component) {
+            $componentConfig = $component->buildConfig();
+
             if ($component instanceof Settings) {
-                $settings = $component->buildConfig();
+                /** @noinspection SlowArrayOperationsInLoopInspection */
+                $config['train'] = \array_replace_recursive($config['train'], $componentConfig);
                 continue;
             }
-            $pipe[] = $component->buildConfig();
+
+            $pipes[] = $component::name();
+            $found = false;
+            foreach ($config['chainer']['pipe'] as $k => $pipe) {
+                if ($pipe['name'] === $componentConfig['name']) {
+                    /** @noinspection SlowArrayOperationsInLoopInspection */
+                    $config['chainer']['pipe'][$k] = \array_replace_recursive($pipe, $componentConfig);
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $config['chainer']['pipe'][] = $componentConfig;
+            }
         }
 
-        return [
-            'deeppavlov_root' => '',
-            'model_path' => '',
-            'dataset_reader' =>
-                [
-                    'name' => 'basic_classification_reader',
-                    'data_path' => 'data/',
-                    'class_sep' => '________',
-                ],
-            'dataset_iterator' =>
-                [
-                    'name' => 'basic_classification_iterator',
-                    'seed' => 42,
-                    'fields_to_merge' =>
-                        [
-                            'train',
-                            'valid',
-                        ],
-                    'merged_field' => 'train',
-                    'field_to_split' => 'train',
-                    'split_fields' =>
-                        [
-                            'train',
-                            'valid',
-                            'test',
-                        ],
-                    'split_proportions' =>
-                        [
-                            0.8,
-                            0.1,
-                            0.1,
-                        ],
-                ],
-            'chainer' =>
-                [
-                    'pipe' => $pipe,
-                    'out' =>
-                        [
-                            'y_pred',
-                        ],
-                    'in' =>
-                        [
-                            'x',
-                        ],
-                    'in_y' =>
-                        [
-                            'y',
-                        ],
-                ],
-            'train' =>
-                array_merge($settings,
-                [
-                    'validation_patience' => 10000,
-                    'batch_size' => 32,
-                    'metrics' =>
-                        [
-                            'classification_f1',
-                        ],
-                    'val_every_n_epochs' => 25,
-                    'log_every_n_epochs' => 1,
-                    'tensorboard_log_dir' => 'logs/',
-                ]),
-        ];
+        foreach ($config['chainer']['pipe'] as $k => $pipe) {
+            if (\in_array($pipe['name'], $pipes, false)) {
+                continue;
+            }
+
+            unset($config['chainer']['pipe'][$k]);
+        }
+
+        return $config;
     }
 
     /**
      * @param AiModel $model
      * @return Result
+     * @throws ValidationException
      * @throws \App\Domain\Exception\ConfigurationException
      */
     protected function startTrain(AiModel $model): Result
@@ -459,7 +435,7 @@ class Strategy extends \App\Domain\Strategy\Strategy
         return new Result();
     }
 
-    private function logResult(AiModel $model, Result $result)
+    private function logResult(AiModel $model, Result $result): void
     {
         $log = new AiModel\Stat([
             'user_id' => $model->user_id,

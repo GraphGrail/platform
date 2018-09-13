@@ -61,14 +61,6 @@ class Embedder extends Component
     {
         return array_merge([
             'name' => self::name(),
-            'in' => ['x'],
-            'out' => ['xv'],
-            'load_path' => [
-                'ft_compressed.pkl',
-                'ft_compressed_local.pkl',
-            ],
-            'emb_dim' => 300,
-            'emb_len' => 50,
         ], $this->createParams());
     }
 }

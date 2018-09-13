@@ -131,25 +131,16 @@ class NetClassifier extends Component
     {
         return [
             'name' => self::name(),
-            'in' => ['xv'],
-            'in_y' => ['y'],
-            'out' => ['y_pred'],
-
             'architecture_name' => $this->architecture,
             'loss' => $this->loss,
             'metrics' => [$this->metrics],
             'optimizer' => $this->optimizer,
             'architecture_params' => array_merge($this->createLayers($this->architecture),[
                 'emb_dim' => (float)$this->emb_dim,
-                'seq_len' => 300, # (float)$this->seq_len,
-                'pool_size' => 2, # (float)$this->pool_size,
+//                'seq_len' => (float)$this->seq_len,
+//                'pool_size' => (float)$this->pool_size,
                 'dropout_power' => (float)$this->dropout_power,
-                'new2old' => 'new2old.pkl',
             ]),
-            'classes' => 'class_names.pkl',
-            'confident_threshold' => 0.5,
-            'save_path' => 'cnn_weights.hdf',
-            'load_path' => 'cnn_weights.hdf5',
         ];
     }
 
