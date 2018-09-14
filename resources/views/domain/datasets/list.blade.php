@@ -22,7 +22,7 @@
                             <td><a href="{{ route('datasets.show', ['dataset' => $dataset]) }}">{{ $dataset->getFullName() }}</a></td>
                             <td>{{ $dataset->statusLabel() }}</td>
                             <td>
-                                @if($dataset->user_id)
+                                @if($dataset->user_id && $dataset->status === \App\Domain\Dataset\Dataset::STATUS_READY)
                                     <a href="javascript:void(0);" onclick="deleteDataset({{ $dataset->id }}, '{{ $dataset->getFullName() }}')">
                                         <i class="fa fa-trash" title="@lang('Delete')"></i>
                                     </a>
