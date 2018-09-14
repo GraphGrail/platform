@@ -18,42 +18,50 @@ class ExtractDatasetData implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $dataset;
-    protected $excel;
+    private $id;
 
     /**
      * Create a new job instance.
-     *
-     * @param Dataset $dataset
+     * @param int $id
      */
-    public function __construct(Dataset $dataset)
+    public function __construct(int $id)
     {
-        $this->dataset = $dataset;
+        $this->id = $id;
     }
 
     /**
      * Execute the job.
      *
+     * @param Storage $storage
      * @return void
      * @throws \League\Csv\Exception
      */
-    public function handle(): void
+    public function handle(Storage $storage): void
     {
-        $storage = new Storage();
+        /** @var Dataset|null $dataset */
+        $dataset = Dataset::query()->find($this->id);
+        if (null === $dataset) {
+            throw new \RuntimeException(sprintf('Not found dataset id: %s', $this->id));
+        }
 
-        if (!$storage->fileExists($this->dataset)) {
-            \Log::warning('Dataset file not exist', ['dataset_id' => $this->dataset->id]);
+        if (!$storage->fileExists($dataset)) {
+            \Log::warning('Dataset file not exist', ['dataset_id' => $dataset->id]);
             return;
         }
-        $group = $this->dataset->labelGroup;
+        $group = $dataset->labelGroup;
         $existLabels = $group->labels;
 
-        $reader = Reader::createFromPath($storage->getPath($this->dataset), 'r');
-        $reader->setDelimiter($this->dataset->delimiter);
-        $reader->setHeaderOffset($this->dataset->exclude_first_row ? 1 : 0);
+        $reader = Reader::createFromPath($storage->getPath($dataset));
+        $reader->setDelimiter($dataset->delimiter);
 
         $records = $reader->getRecords();
+        $first = true;
         foreach ($records as $offset => $record) {
+            if ($first && $dataset->exclude_first_row) {
+                $first = false;
+                continue;
+            }
+
             $text = $this->extractMessage($record);
             $category = $this->extractLabelTree($record);
 
@@ -69,10 +77,10 @@ class ExtractDatasetData implements ShouldQueue
                 $existLabels[] = $label;
             }
             $data = new Data(['text' => $text, 'label_id' => $label->id]);
-            $this->dataset->data()->save($data);
+            $dataset->data()->save($data);
         }
-        $this->dataset->status = Dataset::STATUS_READY;
-        $this->dataset->save();
+        $dataset->status = Dataset::STATUS_READY;
+        $dataset->save();
     }
 
     private function createLabel(LabelGroup $group, string $text): Label

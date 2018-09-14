@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Domain;
 
+use App\Domain\Dataset\Data;
 use App\Domain\Dataset\Dataset;
 use App\Domain\Dataset\LabelGroup;
 use App\Domain\Dataset\Storage;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use App\Jobs\ConvertSeparatorOnDataset;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -103,7 +105,11 @@ class DatasetController extends Controller
         $dataset->labelGroup()->associate($group);
         $dataset->save();
 
-        ExtractDatasetData::dispatch($dataset)->onQueue('dataset');
+        ConvertSeparatorOnDataset::dispatch($dataset->id)->chain(
+            [
+                new ExtractDatasetData($dataset->id),
+            ]
+        )->onQueue('dataset');
 
         return Redirect::to('datasets');
     }
@@ -172,8 +178,9 @@ class DatasetController extends Controller
             return Response::make();
         }
 
-        \Storage::disk()->delete($dataset->file);
+        $this->storage->getDisk()->delete($dataset->file);
         $dataset->delete();
+        Data::query()->where(['dataset_id' => $dataset->id])->delete();
 
         return Response::make();
     }
