@@ -82,7 +82,9 @@ class Strategy extends \App\Domain\Strategy\Strategy
             ]);
             $contents = $response->getBody()->getContents();
             if ($response->getStatusCode() !== 200) {
-                throw new RuntimeException($contents);
+                throw new VerificationException(
+                    sprintf('Invalid status response. Returned status %s', $response->getStatusCode())
+                );
             }
 
             if (!$contents = json_decode($contents, true)) {
@@ -103,7 +105,13 @@ class Strategy extends \App\Domain\Strategy\Strategy
             $errors = $e->getErrors();
 
             $model->status = AiModel::STATUS_VERIFY_CONFIG_FAIL;
+        } catch (\Throwable $e) {
+            \Log::error($e->getMessage());
+            $errors = ['Something went wrong'];
+
+            $model->status = AiModel::STATUS_VERIFY_CONFIG_FAIL;
         }
+
         $model->save();
 
         /** @var \Illuminate\Validation\Validator $validator */
