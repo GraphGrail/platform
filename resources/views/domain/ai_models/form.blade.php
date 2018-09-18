@@ -165,13 +165,21 @@ if ($model->configuration) {
                     <h4>@lang('This section for Ai neural network training. You can use drag-n-drop interface to choose Ai Components from left palette and then adjust their settings in right palette.')</h4>
                 </div>
                 <div class="modal-footer">
-                    <div id="select_first" class="educationBlock-button">
-                        <h5>Toxic comments dataset</h5>
-                        <p>Dataset with large number of Wikipedia comments which have been labeled by human raters for toxic behavior</p>
+                    <div class="educationBlock educationBlock--first">
+                        <div class="educationBlock-avatar"></div>
+                        <div class="educationBlock-content">
+                            <h5>Toxic comments dataset</h5>
+                            <p>Dataset with large number of Wikipedia comments which have been labeled by human raters for toxic behavior</p>
+                            <button class="educationBlock-button" id="select_first">Continue with this dataset</button>
+                        </div>
                     </div>
-                    <div id="select_second" class="educationBlock-button">
-                        <h5>IMDB dataset</h5>
-                        <p>IMDB movie reviews dataset for Sentiment Analysis</p>
+                    <div class="educationBlock educationBlock--second">
+                        <div class="educationBlock-avatar"></div>
+                        <div class="educationBlock-content">
+                            <h5>IMDB dataset</h5>
+                            <p>IMDB movie reviews dataset for Sentiment Analysis</p>
+                            <button class="educationBlock-button" id="select_second">Continue with this dataset</button>
+                        </div>
                     </div>
                 </div>
             </div>
