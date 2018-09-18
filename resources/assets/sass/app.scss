@@ -16,3 +16,23 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+.logo-img {
+  padding-top: 5px;
+}
+
+.btn {
+  padding: 4px 15px;
+  font-size: 17px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 5px 10px 2px rgba(88, 103, 221, 0.19) !important;
+  box-shadow: 0 5px 10px 2px rgba(88, 103, 221, 0.19) !important;
+}
+
+.m-btn--inline {
+  margin-left: 10px;
+}
+
+.m-body .m-wrapper {
+  overflow: visible;
+}

@@ -17,12 +17,15 @@ window.showEducationBlock =
                     toxic = $(this);
                 }
             });
-            if ($(this).attr('id') === 'select_second') {
-                $('#dataset').val(imdb.val());
-                $('#name').val(imdb.html());
-            } else {
-                $('#dataset').val(toxic.val());
-                $('#name').val(toxic.html());
+
+            if (imdb) {
+                if ($(this).attr('id') === 'select_second') {
+                    $('#dataset').val(imdb.val());
+                    $('#name').val(imdb.html());
+                } else {
+                    $('#dataset').val(toxic.val());
+                    $('#name').val(toxic.html());
+                }
             }
 
             $('#educationModal').modal('hide');

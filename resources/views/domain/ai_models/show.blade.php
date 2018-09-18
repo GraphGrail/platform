@@ -56,12 +56,12 @@ if ($model->status === \App\Domain\AiModel::STATUS_TRAINING) {
             </div>
             @if ($model->dataset)
                 <a href="{{ route('datasets.download', ['dataset' => $model->dataset]) }}"
-                   class="btn m-btn--pill m-btn--air btn-primary">{{ __('Download') }}</a>
+                   class="btn m-btn--pill m-btn--air btn-primary m-btn--inline">{{ __('Download') }}</a>
                 <a href="{{ route('datasets.show', ['dataset' => $model->dataset]) }}"
-                   class="btn m-btn--pill m-btn--air btn-accent">{{ __('Preview') }}</a>
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">@lang('Edit')</a>
+                   class="btn m-btn--pill m-btn--air btn-accent m-btn--inline">{{ __('Preview') }}</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide m-btn--inline" href="{{ $edit }}">@lang('Edit')</a>
             @else
-                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide" href="{{ $edit }}">@lang('Empty dataset')</a>
+                <a class="btn m-btn--pill m-btn--air btn-warning m-btn--wide m-btn--inline" href="{{ $edit }}">@lang('Empty dataset')</a>
             @endif
         </div>
     </div>
