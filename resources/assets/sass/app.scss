@@ -36,3 +36,10 @@
 .m-body .m-wrapper {
   overflow: visible;
 }
+
+.m-login__signin .m-login__form-sub .m-login__form-right .btn {
+  padding: .375rem .75rem;
+  font-size: .9rem;
+  border-radius: 0;
+  box-shadow: none !important;
+}
