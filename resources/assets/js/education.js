@@ -1,3 +1,5 @@
+var localStorage = window.localStorage;
+
 window.showEducationBlock =
 
     function (url) {
@@ -29,10 +31,13 @@ window.showEducationBlock =
             }
 
             $('#educationModal').modal('hide');
+            localStorage.setItem('education_ends', 'yes');
         });
     };
 
-$('#educationModal').modal({
-    backdrop: 'static',
-    keyboard: false
-});
+if (localStorage.getItem('education_ends') !== 'yes') {
+    $('#educationModal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+}
