@@ -21,6 +21,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 use \RuntimeException;
 
 class Strategy extends \App\Domain\Strategy\Strategy
