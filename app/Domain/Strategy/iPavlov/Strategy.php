@@ -386,6 +386,8 @@ class Strategy extends \App\Domain\Strategy\Strategy
     protected function createJsonConfiguration(Configuration $configuration): array
     {
         $config = config('aimodels-configuration.iPavlov');
+        Log::info('Read config: '.var_export($config, true));
+        Log::info('Dump config: '.json_encode($config));
         $pipes = [];
 
         foreach ($configuration->components() as $component) {
