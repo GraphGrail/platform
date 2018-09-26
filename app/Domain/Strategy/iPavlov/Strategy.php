@@ -423,7 +423,8 @@ class Strategy extends \App\Domain\Strategy\Strategy
 
             unset($config['chainer']['pipe'][$k]);
         }
-
+        # Reindex array after delete components
+        $config['chainer']['pipe'] = array_values($config['chainer']['pipe']);
         return $config;
     }
 
